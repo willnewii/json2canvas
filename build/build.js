@@ -25,6 +25,7 @@ function build() {
         const distFile = config.output.path + '/index.js';
 
         fs.copySync(distFile, path.join(__dirname, '../example/weapp/component/json2canvas/json2canvas.js'));
+        fs.copySync(distFile, path.join(__dirname, '../example/web/json2canvas.js'));
         fs.copySync(distFile, path.join(__dirname, '../dist_miniprogram/json2canvas.js'));
 
         console.log('build success!');

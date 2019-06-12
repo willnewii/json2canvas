@@ -3,7 +3,7 @@
 > 通过json直接在canvas上绘制图像.基于[cax](https://github.com/dntzhang/cax),借鉴(抄袭)了[mp_canvas_drawer](https://github.com/kuckboy1994/mp_canvas_drawer).比canvas_drawer多了图片圆角支持,圆形,缩放,分组等功能. 同时支持小程序和浏览器.
 
 ## 预览
-- [demo-web](http://blog.mayday5.me/test1/example/web/index.html)
+- [demo-web](http://blog.mayday5.me/json2canvas/example/web/index.html)
 
 - 小程序demo
 ```bash
