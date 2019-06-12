@@ -1,0 +1,7 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <button class="btn" bindtap="bindViewTap"> 示例-海报1 </button>
+    <button class="btn" bindtap="bindViewTap"> 示例-海报2 </button>
+  </view>
+</view>

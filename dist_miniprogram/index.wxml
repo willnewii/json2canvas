@@ -1,0 +1,2 @@
+<!--component/canvasposter/canvasposter.wxml-->
+<cax id="{{caxId}}" showCanvas="{{showCanvas}}"></cax>

@@ -1,0 +1,5 @@
+/dist
+/node_modules
+
+/example/weapp/node_modules
+/example/weapp/miniprogram_npm

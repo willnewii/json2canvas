@@ -1,0 +1,2 @@
+<!--pages/poster.wxml-->
+<json2canvas painting="{{painting}}" showCanvas="{{true}}" bind:getImage="getImage"></json2canvas>
