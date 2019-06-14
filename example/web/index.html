@@ -90,7 +90,7 @@
                     if (!this.editor) {
                         this.editor = new JSONEditor(document.getElementById("jsonview"), {
                             onChangeJSON: (json) => {
-                                json2canvas.draw(json, '#myCanvas');
+                                draw(json, '#myCanvas');
                             }
                         }, option[picked]);
                         this.editor.expandAll();
@@ -98,7 +98,7 @@
                         this.editor.update(option[picked])
                     }
 
-                    json2canvas.draw(option[picked], '#myCanvas');
+                    draw(option[picked], '#myCanvas');
                 }
             }
 
