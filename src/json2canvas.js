@@ -138,21 +138,46 @@ function handleImage({ option, parent }) {
 
 function handleText({ option, parent }) {
     let text = getBaseText(option);
+    // coolzjy@v2ex 提供的正则 https://regexr.com/4f12l 
+    const pattern = /\b(?![\u0020-\u002F\u003A-\u003F\u2000-\u206F\u2E00-\u2E7F\u3000-\u303F\uFF00-\uFF1F])|(?=[\u2E80-\u2FFF\u3040-\u9FFF])/g
 
     if (option.maxWidth && (text.getWidth() > option.maxWidth)) {//折行处理
         let fillText = ''
         let fillTop = option.y
         let lineNum = 1
+
+        //获取可折行的下标
+        let breakLines = [];
+        option.text.replace(pattern, function () {
+            breakLines.push(arguments[arguments.length - 2] - 1);
+        });
+
+        let tempBreakLine = 0;
         for (let i = 0; i < option.text.length; i++) {
+            if (breakLines.indexOf(i) !== -1) {
+                tempBreakLine = i;
+            }
+
             fillText += [option.text[i]]
             text.text = fillText
             if (text.getWidth() > option.maxWidth) {
                 let temp = getBaseText(option);
-                temp.text = (lineNum === option.maxLine && i !== option.text.length) ? fillText.substring(0, fillText.length - 1) + '...' : fillText;
+
+                if (lineNum === option.maxLine && i !== option.text.length) {
+                    temp.text = fillText.substring(0, fillText.length - 1) + '...';
+                    fillText = '';
+                } else {
+                    if (tempBreakLine === i) {
+                        temp.text = fillText;
+                        fillText = '';
+                    } else {
+                        temp.text = fillText.substring(0, fillText.length - (i - tempBreakLine));
+                        fillText = fillText.substring(fillText.length - (i - tempBreakLine), fillText.length);
+                    }
+                }
                 _setPosition({ ele: temp, option, value: 'x', parent });
                 temp.y = fillTop;
                 parent.add(temp);
-                fillText = '';
 
                 if (lineNum === option.maxLine && i !== option.text.length) {
                     break;
@@ -166,10 +191,10 @@ function handleText({ option, parent }) {
         if (!fillText) {
             return;
         }
+
         text.text = fillText;
         _setPosition({ ele: text, option, value: 'x', parent });
         text.y = fillTop;
-
     } else {
         setPosition(text, option, parent);
     }
