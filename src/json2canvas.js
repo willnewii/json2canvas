@@ -147,33 +147,29 @@ function handleText({ option, parent }) {
             fillText += [option.text[i]]
             text.text = fillText
             if (text.getWidth() > option.maxWidth) {
-                if (lineNum === option.maxLine) {
-                    if (i !== option.text.length) {
-                        let temp = getBaseText(option);
-                        temp.text = fillText.substring(0, fillText.length - 1) + '...';
-                        _setPosition({ ele: temp, option, value: 'x', parent });
-                        temp.y = fillTop;
-                        parent.add(temp);
-
-                        fillText = ''
-                        break
-                    }
-                }
-
                 let temp = getBaseText(option);
-                temp.text = fillText;
+                temp.text = (lineNum === option.maxLine && i !== option.text.length) ? fillText.substring(0, fillText.length - 1) + '...' : fillText;
                 _setPosition({ ele: temp, option, value: 'x', parent });
                 temp.y = fillTop;
                 parent.add(temp);
-
                 fillText = '';
+
+                if (lineNum === option.maxLine && i !== option.text.length) {
+                    break;
+                }
+
                 fillTop += option.lineHeight || 0;
                 lineNum++
             }
         }
+
+        if (!fillText) {
+            return;
+        }
         text.text = fillText;
         _setPosition({ ele: text, option, value: 'x', parent });
         text.y = fillTop;
+
     } else {
         setPosition(text, option, parent);
     }
