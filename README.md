@@ -30,6 +30,7 @@ npm i json2canvas
 - 支持缩放 如果设计稿是750,而画布只有375时.你不需要任何换算,只需要设置scale为0.5
 - 支持图片圆角
 - 支持圆型
+- 长文本自动换行(感谢 coolzjy@v2ex 提供的正则 https://regexr.com/4f12l ,优化了换行的计算方式.(不会折断单词))
 - 矩形支持渐变色
 - 支持分组(cax里很好用的一个功能)  [说明](https://github.com/dntzhang/cax/blob/master/README.CN.md)
 
