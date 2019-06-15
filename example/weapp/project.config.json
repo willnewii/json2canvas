@@ -48,13 +48,20 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 0,
+			"current": 1,
 			"list": [
 				{
 					"id": 0,
 					"name": "海报页",
 					"pathName": "pages/poster/poster",
 					"query": "type=3",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "海报-测试页",
+					"pathName": "pages/poster/poster",
+					"query": "type=3&dev=true",
 					"scene": null
 				}
 			]

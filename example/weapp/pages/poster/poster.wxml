@@ -1,2 +1,4 @@
 <!--pages/poster.wxml-->
-<json2canvas painting="{{painting}}" showCanvas="{{true}}" bind:getImage="getImage"></json2canvas>
+<json2canvasdev  wx:if="{{dev}}" painting="{{painting}}" showCanvas="{{true}}" bind:getImage="getImage"></json2canvasdev>
+<json2canvas wx:else painting="{{painting}}" showCanvas="{{true}}" bind:getImage="getImage"></json2canvas>
+

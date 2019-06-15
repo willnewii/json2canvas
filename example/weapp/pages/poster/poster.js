@@ -6,6 +6,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    dev: false,
     painting: data[1],
   },
 
@@ -14,6 +15,7 @@ Page({
    */
   onLoad: function (options) {
     this.setData({
+      dev: options.dev,
       painting: data[options.type]
     })
   },

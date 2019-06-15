@@ -219,7 +219,7 @@ export default {
     "3": {
         "width": 750,
         "height": 1334,
-        "scale": 0.5,
+        "scale": 0.8,
         "children": [
             {
                 "type": "rect",
@@ -229,113 +229,187 @@ export default {
                 "x": 0,
                 "y": 0
             }, {
-                "type": "text",
-                "text": "1.图片",
-                "font": "24px Arial",
-                "color": "#FFFFFF",
-                "x": "48",
+                "type": "group",
+                "x": 48,
                 "y": 20,
-            }, {
-                "type": "image",
-                "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
-                "width": 100,
-                "x": 48,
-                "y": 50,
-            }, {
-                "type": "text",
-                "text": "2.图片圆角&边框",
-                "font": "24px Arial",
-                "color": "#FFFFFF",
-                "x": 48,
-                "y": 180,
-            }, {
-                "type": "image",
-                "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
-                "width": 100,
-                "x": 48,
-                "y": 220,
-                "isCircular": true,
-            }, {
-                "type": "circle",
-                "r": 50,
-                "lineWidth": 5,
-                "strokeStyle": "#CCCCCC",
-                "x": 48,
-                "y": 220,
-            }, {
-                "type": "text",
-                "text": "3.矩形渐变色",
-                "font": "24px Arial",
-                "color": "#FFFFFF",
-                "x": 48,
-                "y": 350,
-            }, {
-                "type": "rect",
-                "width": 200,
-                "height": 100,
-                "x": 48,
-                "y": 390,
-                // "fillStyle": "#FFFFFF",
-                "linearGradient": [0, 0, 0, 100],
-                "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']]
-            }, {
-                "type": "text",
-                "text": "4.字体阴影",
-                "font": "24px Arial",
-                "color": "#FFFFFF",
-                "x": 48,
-                "y": 510,
-                "shadow": {
+                "children": [{
+                    "type": "text",
+                    "text": "1.图片",
+                    "font": "30px Arial",
                     "color": "#FFFFFF",
-                    "offsetX": 1,
-                    "offsetY": 1,
-                    "blur": 1
-                }
-            }, {
-                "type": "text",
-                // "text": "5.长文自动换行:有没有那么一种永远 永远不改变 拥抱过的美丽 都再也不破碎 让险峻岁月不能 在脸上撒野 让生离和死别都遥远",
-                "text": "5.长文自动换行:有没有那么word 永远不改变 拥抱过的mayday美丽 都再也不破碎mayday 让险峻岁月不能 在脸上撒野 让生离和死别都遥远",
-                "font": "24px Arial",
-                "color": "#FFFFFF",
-                "x": 48,
-                "y": 550,
-                "maxWidth": 300,
-                "lineHeight": 30
+                    "x": 0,
+                    "y": 0,
+                }, {
+                    "type": "image",
+                    "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
+                    "width": 100,
+                    "x": 0,
+                    "y": 50,
+                }, {
+                    "type": "image",
+                    "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
+                    "width": 100,
+                    "x": 150,
+                    "y": 50,
+                    "isCircular": true,
+                }, {
+                    "type": "circle",
+                    "r": 50,
+                    "lineWidth": 5,
+                    "strokeStyle": "#CCCCCC",
+                    "x": 150,
+                    "y": 50,
+                }]
             }, {
                 "type": "group",
                 "x": 48,
-                "y": 720,
-                "children": [
-                    {
-                        "type": "text",
-                        "text": "6.分组测试",
-                        "font": "24px Arial",
+                "y": 200,
+                "children": [{
+                    "type": "text",
+                    "text": "2.矩形,圆角矩形,圆",
+                    "font": "30px Arial",
+                    "color": "#FFFFFF",
+                    "x": 0,
+                    "y": 0,
+                }, {
+                    "type": "rect",
+                    "width": 100,
+                    "height": 100,
+                    "lineWidth": 5,
+                    "strokeStyle": "#FFFFFF",
+                    "x": 0,
+                    "y": 50,
+                }, {
+                    "type": "rect",
+                    "width": 100,
+                    "height": 100,
+                    "lineWidth": 5,
+                    "strokeStyle": "#FFFFFF",
+                    "linearGradient": [0, 0, 0, 100],
+                    "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                    "x": 150,
+                    "y": 50,
+                }, {
+                    "type": "rect",
+                    "width": 100,
+                    "height": 100,
+                    "linearGradient": [0, 0, 0, 100],
+                    "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                    "x": 300,
+                    "y": 50,
+                }, {
+                    "type": "rect",
+                    "width": 100,
+                    "height": 100,
+                    "r": 20,
+                    "lineWidth": 5,
+                    "strokeStyle": "#FFFFFF",
+                    "x": 0,
+                    "y": 180,
+                }, {
+                    "type": "rect",
+                    "width": 100,
+                    "height": 100,
+                    "r": 20,
+                    "lineWidth": 5,
+                    "strokeStyle": "#FFFFFF",
+                    "linearGradient": [0, 0, 0, 100],
+                    "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                    "x": 150,
+                    "y": 180,
+                }, {
+                    "type": "rect",
+                    "width": 100,
+                    "height": 100,
+                    "r": 20,
+                    "linearGradient": [0, 0, 0, 100],
+                    "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                    "x": 300,
+                    "y": 180,
+                }, {
+                    "type": "circle",
+                    "r": 50,
+                    "lineWidth": 5,
+                    "strokeStyle": "#FFFFFF",
+                    "x": 0,
+                    "y": 310,
+                }, {
+                    "type": "circle",
+                    "r": 50,
+                    "lineWidth": 5,
+                    "linearGradient": [0, 0, 0, 100],
+                    "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                    "strokeStyle": "#CCCCCC",
+                    "x": 150,
+                    "y": 310,
+                }, {
+                    "type": "circle",
+                    "r": 50,
+                    "linearGradient": [0, 0, 0, 100],
+                    "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                    "x": 300,
+                    "y": 310,
+                }]
+            }, {
+                "type": "group",
+                "x": 48,
+                "y": 640,
+                "children": [{
+                    "type": "text",
+                    "text": "3.文本",
+                    "font": "30px Arial",
+                    "color": "#FFFFFF",
+                    "x": 0,
+                    "y": 0,
+                }, {
+                    "type": "text",
+                    "text": "我是一段文字",
+                    "font": "24px Arial",
+                    "color": "#FFFFFF",
+                    "x": 0,
+                    "y": 50,
+                }, {
+                    "type": "text",
+                    "text": "我是一段文字我有阴影",
+                    "font": "24px Arial",
+                    "color": "#FFFFFF",
+                    "x": 0,
+                    "y": 90,
+                    "shadow": {
                         "color": "#FFFFFF",
-                        "x": 0,
-                        "y": 0,
-                    }, {
-                        "type": "rect",
-                        "width": 300,
-                        "height": 100,
-                        "fillStyle": "#FFFFFF",
-                        "x": 0,
-                        "y": 30
-                    }, {
-                        "type": "circle",
-                        "r": 30,
-                        "lineWidth": 5,
-                        "strokeStyle": "#B0F566",
-                        "x": 10,
-                        "y": 40,
-                    }, {
-                        "type": "circle",
-                        "r": 30,
-                        "lineWidth": 5,
-                        "fillStyle": "#4AF2A1",
-                        "x": 80,
-                        "y": 40,
+                        "offsetX": 1,
+                        "offsetY": 1,
+                        "blur": 1
                     }
-                ]
+                }, {
+                    "type": "text",
+                    "text": "我是一段文字,我会自动换行:有没有那么 永远不改变 拥word抱过的美丽 都再也不mayday破碎 让险峻岁月不能 在脸上撒野 让生离和死别都遥远",
+                    "font": "24px Arial",
+                    "color": "#FFFFFF",
+                    "x": 0,
+                    "y": 130,
+                    "maxWidth": 300,
+                    "lineHeight": 40
+                }, {
+                    "type": "text",
+                    "text": "我是一段文字,我会自动换行，我最多只显示两行:有没有那么 永远不改变 拥word抱过的美丽 都再也不mayday破碎 让险峻岁月不能 在脸上撒野 让生离和死别都遥远",
+                    "font": "24px Arial",
+                    "color": "#FFFFFF",
+                    "x": 0,
+                    "y": 380,
+                    "maxWidth": 300,
+                    "maxLine": 2,
+                    "lineHeight": 40
+                }, {
+                    "type": "text",
+                    "text": "我是一段文字，我有渐变色",
+                    "font": "24px Arial",
+                    "color": "#FFFFFF",
+                    "linearGradient": [0, 0, 200, 0],
+                    "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                    "x": 0,
+                    "y": 460,
+                }]
             }]
     }
 }

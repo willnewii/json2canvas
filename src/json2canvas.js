@@ -13,9 +13,9 @@ let stage = null;
 let imageMap = new Map();
 
 function draw(option, selecter, page = null, callback) {
-    if (!option.scale) {
-        option.scale = 1;
-    }
+    option = Object.assign({
+        scale: 1,
+    }, option)
 
     const params = [option.width * option.scale, option.height * option.scale, selecter];
     if (isWeapp) {
@@ -58,10 +58,8 @@ function handleElements({ option, parent }) {
                 handleElements(param);
                 break;
             case TYPE.rect:
-                ele = handleRect(param);
-                break;
             case TYPE.circle:
-                ele = handleCircle(param);
+                ele = handleGraphics(param);
                 break;
             case TYPE.image:
                 ele = handleImage(param);
@@ -76,37 +74,49 @@ function handleElements({ option, parent }) {
     stage.add(caxGroup);
 }
 
-function handleCircle({ option, parent }) {
-    const ele = new cax.Circle(option.r, option);
-    setPosition(ele, option, parent);
-    ele.draw();
-    return ele;
-}
-
-function handleRect({ option, parent }) {
+function handleGraphics({ option, parent }) {
+    option = Object.assign({
+        lineWidth: 1,
+        lt: true,
+        rt: true,
+        lb: true,
+        rb: true
+    }, option)
     const ele = new cax.Graphics();
-    ele
-        .beginPath()
-        .rect(0, 0, option.width, option.height)
-        .closePath();
+    ele.beginPath();
+
+    switch (option.type) {
+        case TYPE.rect:
+            if (option.r > 0) {
+                setRoundedRect({ ele, option });
+            } else {
+                ele.rect(0, 0, option.width, option.height)
+            }
+            break;
+        case TYPE.circle:
+            ele.arc(0, 0, option.r, 0, Math.PI * 2, false);
+            break;
+    }
+
+    ele.closePath();
+
+    let gradient = getGradient({ option });
+
+    //如果fillStyle&strokeStyle 都不填,默认fillStyle
+    if (gradient && !option.fillStyle && !option.strokeStyle) {
+        option.fillStyle = '#FFFFFF'
+    }
 
     if (option.fillStyle) {
-        ele.fillStyle(option.fillStyle);
-        ele.fill();
-    } else if (option.linearGradient && option.colors) {
-        ele.createLinearGradient(...option.linearGradient);
-        for (let i = 0; i < option.colors.length; i++) {
-            ele.addColorStop(...option.colors[i]);
-        }
-        ele.fillGradient();
+        ele.fillStyle(gradient || option.fillStyle);
         ele.fill();
     } else if (option.strokeStyle) {
-        ele.strokeStyle(option.strokeStyle);
+        ele.lineWidth(option.lineWidth)
+        ele.strokeStyle(gradient || option.strokeStyle);
         ele.stroke();
     }
 
     setPosition(ele, option, parent);
-
     return ele;
 }
 
@@ -201,6 +211,45 @@ function handleText({ option, parent }) {
     return text;
 }
 
+function setRoundedRect({ ele, option }) {
+    const r = option.r,
+        ax = option.r,
+        ay = 0,
+        bx = option.width,
+        by = 0,
+        cx = option.width,
+        cy = option.height,
+        dx = 0,
+        dy = option.height,
+        ex = 0,
+        ey = 0
+
+    ele.moveTo(ax, ay)
+    if (option.rt) {
+        ele.arcTo(bx, by, cx, cy, r)
+    } else {
+        ele.lineTo(bx, by)
+    }
+
+    if (option.rb) {
+        ele.arcTo(cx, cy, dx, dy, r)
+    } else {
+        ele.lineTo(cx, cy)
+    }
+
+    if (option.lb) {
+        ele.arcTo(dx, dy, ex, ey, r)
+    } else {
+        ele.lineTo(dx, dy)
+    }
+
+    if (option.lt) {
+        ele.arcTo(ex, ey, ax, ay, r)
+    } else {
+        ele.lineTo(ex, ey)
+    }
+}
+
 /**
  * 
  * @param {*} ele canvas元素
@@ -253,12 +302,32 @@ function _setPosition({ ele, option, value, parent }) {
     }
 }
 
+function getCtx(){
+    return isWeapp ? stage.ctx : stage.canvas.getContext("2d")
+}
+
+function getGradient({ option }) {
+    let gradient = null;
+    if (option.linearGradient && option.colors) {
+        gradient = getCtx().createLinearGradient(...option.linearGradient);
+        for (let i = 0; i < option.colors.length; i++) {
+            gradient.addColorStop(...option.colors[i]);
+        }
+    }
+    return gradient;
+}
+
 function getBaseText(option) {
     const text = new cax.Text(option.text, {
         font: option.font,
         color: option.color,
         baseline: 'top'
     });
+
+    let gradient = getGradient({ option });
+    if (gradient) {
+        text.color = gradient;
+    }
 
     if (option.shadow) {
         text.shadow = option.shadow;

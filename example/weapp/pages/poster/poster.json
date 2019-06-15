@@ -1,5 +1,6 @@
 {
   "usingComponents": {
-    "json2canvas":"/miniprogram_npm/json2canvas/index"
+    "json2canvas":"/miniprogram_npm/json2canvas/index",
+    "json2canvasdev":"/component/json2canvas/index"
   }
 }

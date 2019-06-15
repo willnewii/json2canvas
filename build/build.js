@@ -5,15 +5,16 @@ process.env.NODE_ENV = 'production';
 const path = require('path')
 const del = require('del')
 const webpack = require('webpack');
-const fs = require('fs-extra');
+const chalk = require('chalk');
+const { execSync } = require('child_process');
 
 const config = require('../webpack.config');
-
-del.sync(['dist/**', 'dist_miniprogram/**']);
 
 build();
 
 function build() {
+    del.sync(['dist/**', 'dist_miniprogram/**']);
+
     webpack(config, (err, stats) => {
         if (err || stats.hasErrors()) console.log(err);
 
@@ -24,10 +25,14 @@ function build() {
 
         const distFile = config.output.path + '/index.js';
 
-        fs.copySync(distFile, path.join(__dirname, '../example/weapp/component/json2canvas/json2canvas.js'));
-        fs.copySync(distFile, path.join(__dirname, '../example/web/json2canvas.js'));
-        fs.copySync(distFile, path.join(__dirname, '../dist_miniprogram/json2canvas.js'));
+        execSync(`cp -fr ${path.join(__dirname, '../src/json2canvas.js')} ${path.join(__dirname, '../example/weapp/component/json2canvas/json2canvas.js')}`);
 
-        console.log('build success!');
+        execSync(`cp -fr ${distFile} ${path.join(__dirname, '../example/web/json2canvas.js')}`);
+        execSync(`mv ${config.output.path + '/index.html'} ${path.join(__dirname, '../example/web/index.html')}`);
+
+        execSync(`cp -fr ${path.join(__dirname, '../example/weapp/component/json2canvas')} ${path.join(__dirname, '../dist_miniprogram')}`);
+        execSync(`cp -fr ${distFile} ${path.join(__dirname, '../dist_miniprogram/json2canvas.js')}`);
+
+        console.log(chalk.bold.blue('build success!'));
     });
 }

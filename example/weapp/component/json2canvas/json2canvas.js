@@ -1,1 +1,394 @@
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t(require("cax")):"function"==typeof define&&define.amd?define(["cax"],t):"object"==typeof exports?exports.json2canvas=t(require("cax")):e.json2canvas=t(e.cax)}(window,function(e){return function(e){var t={};function n(r){if(t[r])return t[r].exports;var i=t[r]={i:r,l:!1,exports:{}};return e[r].call(i.exports,i,i.exports,n),i.l=!0,i.exports}return n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var i in e)n.d(r,i,function(t){return e[t]}.bind(null,i));return r},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=1)}([function(t,n){t.exports=e},function(e,t,n){"use strict";n.r(t),n.d(t,"draw",function(){return u});var r=n(0),i=n.n(r);const o="undefined"!=typeof wx&&!wx.createCanvas,a={rect:"rect",circle:"circle",image:"image",text:"text",group:"group"};let l=null,c=new Map;function u(e,t,n=null,r){e.scale||(e.scale=1);const u=[e.width*e.scale,e.height*e.scale,t];(l=o?new i.a.Stage(...u,n):new i.a.Stage(...u)).scale=e.scale;let h=function e(t){let n=[];let r=[];t.children.forEach(t=>{t.type===a.image?-1===r.indexOf(t.url)&&(r.push(t.url),n.push(function(e){return new Promise((t,n)=>{if(o)wx.getImageInfo({src:e,success(n){new i.a.Bitmap(n.path.startsWith("http")?n.path:e,function(){t({url:e,bitmap:this})})},fail(n){console.error(n),t({url:e,bitmap:null})}});else{const n=new Image;n.onload=function(){new i.a.Bitmap(e,function(){t({url:e,bitmap:this})})},n.onerror=function(n){console.error(n),t({url:e,bitmap:null})},n.src=e}})}(t.url))):t.type===a.group&&n.push(...e(t))});return n}(e);Promise.all(h).then(t=>{t.forEach(({url:e,bitmap:t})=>{c.set(e,t)}),function e({option:t,parent:n}){const r=new i.a.Group;t.width&&(r.width=t.width);t.height&&(r.height=t.height);s(r,t,n);t.children.forEach(t=>{let n=null,o={option:t,parent:r};switch(t.type){case a.group:e(o);break;case a.rect:n=function({option:e,parent:t}){const n=new i.a.Graphics;if(n.beginPath().rect(0,0,e.width,e.height).closePath(),e.fillStyle)n.fillStyle(e.fillStyle),n.fill();else if(e.linearGradient&&e.colors){n.createLinearGradient(...e.linearGradient);for(let t=0;t<e.colors.length;t++)n.addColorStop(...e.colors[t]);n.fillGradient(),n.fill()}else e.strokeStyle&&(n.strokeStyle(e.strokeStyle),n.stroke());return s(n,e,t),n}(o);break;case a.circle:n=function({option:e,parent:t}){const n=new i.a.Circle(e.r,e);return s(n,e,t),n.draw(),n}(o);break;case a.image:n=function({option:e,parent:t}){let n=c.get(e.url);if(n.used&&(n=n.clone()),n){n.used=!0;let r=n.width;if(n.scale=e.width/r,s(n,e,t),e.isCircular){const e=new i.a.Graphics;e.arc(r/2,r/2,r/2,0,2*Math.PI),n.clip(e)}return n}return null}(o);break;case a.text:n=function({option:e,parent:t}){let n=p(e);const r=/\b(?![\u0020-\u002F\u003A-\u003F\u2000-\u206F\u2E00-\u2E7F\u3000-\u303F\uFF00-\uFF1F])|(?=[\u2E80-\u2FFF\u3040-\u9FFF])/g;if(e.maxWidth&&n.getWidth()>e.maxWidth){let i="",o=e.y,a=1,l=[];e.text.replace(r,function(){l.push(arguments[arguments.length-2]-1)});let c=0;for(let r=0;r<e.text.length;r++)if(-1!==l.indexOf(r)&&(c=r),i+=[e.text[r]],n.text=i,n.getWidth()>e.maxWidth){let n=p(e);if(a===e.maxLine&&r!==e.text.length?(n.text=i.substring(0,i.length-1)+"...",i=""):c===r?(n.text=i,i=""):(n.text=i.substring(0,i.length-(r-c)),i=i.substring(i.length-(r-c),i.length)),f({ele:n,option:e,value:"x",parent:t}),n.y=o,t.add(n),a===e.maxLine&&r!==e.text.length)break;o+=e.lineHeight||0,a++}if(!i)return;n.text=i,f({ele:n,option:e,value:"x",parent:t}),n.y=o}else s(n,e,t);return n}(o)}n&&r.add(n)});l.add(r)}({option:e}),l.children.reverse(),l.update(),setTimeout(()=>{r&&r()},800)})}function s(e,t,n){f({ele:e,option:t,value:"x",parent:n}),f({ele:e,option:t,value:"y",parent:n})}function f({ele:e,option:t,value:n,parent:r}){switch(t[n]){case"center":switch(t.type){case a.image:e[n]=(r.width-e.width*e.scale)/2;break;case a.text:e[n]=(r.width-e.getWidth())/2}break;case"bottom":switch(t.type){case a.image:e[n]=(r?r.height:t.height/t.scale)-e.height*e.scale;break;case a.rect:case a.group:e[n]=(r?r.height:t.height/t.scale)-t.height}break;default:switch(t.type){case a.circle:e[n]=t[n]+t.r;break;default:e[n]=t[n]||0}}}function p(e){const t=new i.a.Text(e.text,{font:e.font,color:e.color,baseline:"top"});return e.shadow&&(t.shadow=e.shadow),t}}])});
+import cax from "cax";
+
+const isWeapp = typeof wx !== 'undefined' && !wx.createCanvas;
+const TYPE = {
+    rect: 'rect',
+    circle: 'circle',
+    image: 'image',
+    text: 'text',
+    group: 'group'
+};
+
+let stage = null;
+let imageMap = new Map();
+
+function draw(option, selecter, page = null, callback) {
+    option = Object.assign({
+        scale: 1,
+    }, option)
+
+    const params = [option.width * option.scale, option.height * option.scale, selecter];
+    if (isWeapp) {
+        stage = new cax.Stage(...params, page);
+    } else {
+        stage = new cax.Stage(...params);
+    }
+    stage.scale = option.scale;
+
+    // 获取所有元素的图片链接
+    let preImgs = getUrls(option);
+
+    Promise.all(preImgs).then((results) => {
+        results.forEach(({ url, bitmap }) => {
+            imageMap.set(url, bitmap);
+        });
+
+        handleElements({ option });
+
+        stage.children.reverse();
+        stage.update();
+        setTimeout(() => {
+            callback && callback();
+        }, 800)
+    });
+}
+
+function handleElements({ option, parent }) {
+    const caxGroup = new cax.Group();
+    option.width && (caxGroup.width = option.width);
+    option.height && (caxGroup.height = option.height);
+
+    setPosition(caxGroup, option, parent);
+
+    option.children.forEach((child) => {
+        let ele = null;
+        let param = { option: child, parent: caxGroup };
+        switch (child.type) {
+            case TYPE.group:
+                handleElements(param);
+                break;
+            case TYPE.rect:
+            case TYPE.circle:
+                ele = handleGraphics(param);
+                break;
+            case TYPE.image:
+                ele = handleImage(param);
+                break;
+            case TYPE.text:
+                ele = handleText(param);
+                break;
+        }
+        ele && caxGroup.add(ele);
+    });
+
+    stage.add(caxGroup);
+}
+
+function handleGraphics({ option, parent }) {
+    option = Object.assign({
+        lineWidth: 1,
+        lt: true,
+        rt: true,
+        lb: true,
+        rb: true
+    }, option)
+    const ele = new cax.Graphics();
+    ele.beginPath();
+
+    switch (option.type) {
+        case TYPE.rect:
+            if (option.r > 0) {
+                setRoundedRect({ ele, option });
+            } else {
+                ele.rect(0, 0, option.width, option.height)
+            }
+            break;
+        case TYPE.circle:
+            ele.arc(0, 0, option.r, 0, Math.PI * 2, false);
+            break;
+    }
+
+    ele.closePath();
+
+    let gradient = getGradient({ option });
+
+    //如果fillStyle&strokeStyle 都不填,默认fillStyle
+    if (gradient && !option.fillStyle && !option.strokeStyle) {
+        option.fillStyle = '#FFFFFF'
+    }
+
+    if (option.fillStyle) {
+        ele.fillStyle(gradient || option.fillStyle);
+        ele.fill();
+    } else if (option.strokeStyle) {
+        ele.lineWidth(option.lineWidth)
+        ele.strokeStyle(gradient || option.strokeStyle);
+        ele.stroke();
+    }
+
+    setPosition(ele, option, parent);
+    return ele;
+}
+
+function handleImage({ option, parent }) {
+    let bitmap = imageMap.get(option.url);
+
+    //标记位,如果一张图用到两次,应该clone.
+    bitmap.used && (bitmap = bitmap.clone())
+
+    if (bitmap) {
+        bitmap.used = true;
+        let width = bitmap.width;
+
+        // 缩放
+        bitmap.scale = option.width / width;
+        setPosition(bitmap, option, parent);
+
+        //圆角
+        if (option.isCircular) {
+            const clipPath = new cax.Graphics();
+            clipPath.arc(width / 2, width / 2, width / 2, 0, Math.PI * 2);
+            bitmap.clip(clipPath);
+        }
+
+        return bitmap;
+    }
+    return null;
+}
+
+function handleText({ option, parent }) {
+    let text = getBaseText(option);
+    // coolzjy@v2ex 提供的正则 https://regexr.com/4f12l 
+    const pattern = /\b(?![\u0020-\u002F\u003A-\u003F\u2000-\u206F\u2E00-\u2E7F\u3000-\u303F\uFF00-\uFF1F])|(?=[\u2E80-\u2FFF\u3040-\u9FFF])/g
+
+    if (option.maxWidth && (text.getWidth() > option.maxWidth)) {//折行处理
+        let fillText = ''
+        let fillTop = option.y
+        let lineNum = 1
+
+        //获取可折行的下标
+        let breakLines = [];
+        option.text.replace(pattern, function () {
+            breakLines.push(arguments[arguments.length - 2] - 1);
+        });
+
+        let tempBreakLine = 0;
+        for (let i = 0; i < option.text.length; i++) {
+            if (breakLines.indexOf(i) !== -1) {
+                tempBreakLine = i;
+            }
+
+            fillText += [option.text[i]]
+            text.text = fillText
+            if (text.getWidth() > option.maxWidth) {
+                let temp = getBaseText(option);
+
+                if (lineNum === option.maxLine && i !== option.text.length) {
+                    temp.text = fillText.substring(0, fillText.length - 1) + '...';
+                    fillText = '';
+                } else {
+                    if (tempBreakLine === i) {
+                        temp.text = fillText;
+                        fillText = '';
+                    } else {
+                        temp.text = fillText.substring(0, fillText.length - (i - tempBreakLine));
+                        fillText = fillText.substring(fillText.length - (i - tempBreakLine), fillText.length);
+                    }
+                }
+                _setPosition({ ele: temp, option, value: 'x', parent });
+                temp.y = fillTop;
+                parent.add(temp);
+
+                if (lineNum === option.maxLine && i !== option.text.length) {
+                    break;
+                }
+
+                fillTop += option.lineHeight || 0;
+                lineNum++
+            }
+        }
+
+        if (!fillText) {
+            return;
+        }
+
+        text.text = fillText;
+        _setPosition({ ele: text, option, value: 'x', parent });
+        text.y = fillTop;
+    } else {
+        setPosition(text, option, parent);
+    }
+    return text;
+}
+
+function setRoundedRect({ ele, option }) {
+    const r = option.r,
+        ax = option.r,
+        ay = 0,
+        bx = option.width,
+        by = 0,
+        cx = option.width,
+        cy = option.height,
+        dx = 0,
+        dy = option.height,
+        ex = 0,
+        ey = 0
+
+    ele.moveTo(ax, ay)
+    if (option.rt) {
+        ele.arcTo(bx, by, cx, cy, r)
+    } else {
+        ele.lineTo(bx, by)
+    }
+
+    if (option.rb) {
+        ele.arcTo(cx, cy, dx, dy, r)
+    } else {
+        ele.lineTo(cx, cy)
+    }
+
+    if (option.lb) {
+        ele.arcTo(dx, dy, ex, ey, r)
+    } else {
+        ele.lineTo(dx, dy)
+    }
+
+    if (option.lt) {
+        ele.arcTo(ex, ey, ax, ay, r)
+    } else {
+        ele.lineTo(ex, ey)
+    }
+}
+
+/**
+ * 
+ * @param {*} ele canvas元素
+ * @param {*} option 配置参数
+ * @param {*} parent 父元素,用于计算相对位置
+ */
+function setPosition(ele, option, parent) {
+    _setPosition({ ele, option, value: 'x', parent });
+    _setPosition({ ele, option, value: 'y', parent });
+}
+
+/**
+ *
+ * @param ele 处理的方向关键词 center / bottom
+ * @param option
+ * @param value 【x,y】
+ */
+function _setPosition({ ele, option, value, parent }) {
+    switch (option[value]) {
+        case 'center':
+            switch (option.type) {
+                case TYPE.image:
+                    ele[value] = (parent.width - ele.width * ele.scale) / 2;
+                    break;
+                case TYPE.text:
+                    ele[value] = (parent.width - ele.getWidth()) / 2;
+                    break;
+            }
+            break;
+        case 'bottom':
+            switch (option.type) {
+                case TYPE.image:
+                    ele[value] = (parent ? parent.height : (option.height / option.scale)) - ele.height * ele.scale;
+                    break;
+                case TYPE.rect:
+                case TYPE.group:
+                    ele[value] = (parent ? parent.height : (option.height / option.scale)) - option.height;
+                    break;
+            }
+            break;
+        default:
+            switch (option.type) {
+                case TYPE.circle:
+                    ele[value] = option[value] + option.r;
+                    break;
+                default:
+                    ele[value] = option[value] || 0;
+                    break;
+            }
+    }
+}
+
+function getCtx(){
+    return isWeapp ? stage.ctx : stage.canvas.getContext("2d")
+}
+
+function getGradient({ option }) {
+    let gradient = null;
+    if (option.linearGradient && option.colors) {
+        gradient = getCtx().createLinearGradient(...option.linearGradient);
+        for (let i = 0; i < option.colors.length; i++) {
+            gradient.addColorStop(...option.colors[i]);
+        }
+    }
+    return gradient;
+}
+
+function getBaseText(option) {
+    const text = new cax.Text(option.text, {
+        font: option.font,
+        color: option.color,
+        baseline: 'top'
+    });
+
+    let gradient = getGradient({ option });
+    if (gradient) {
+        text.color = gradient;
+    }
+
+    if (option.shadow) {
+        text.shadow = option.shadow;
+    }
+
+    return text;
+}
+
+/**
+ * 加载图片
+ */
+function loadImage(url) {
+    return new Promise((resolve, reject) => {
+        if (isWeapp) {
+            wx.getImageInfo({
+                src: url,
+                success(res) {
+                    new cax.Bitmap(res.path.startsWith('http') ? res.path : url, function () {
+                        resolve({ url, bitmap: this });
+                    });
+                },
+                fail(res) {
+                    console.error(res);
+                    resolve({ url, bitmap: null });
+                }
+            });
+        } else {
+            const img = new Image()
+            // img.crossOrigin = '';
+            img.onload = function () {
+                new cax.Bitmap(url, function () {
+                    resolve({ url, bitmap: this });
+                });
+            };
+            img.onerror = function (res) {
+                console.error(res);
+                resolve({ url, bitmap: null });
+            };
+            img.src = url;
+        }
+    });
+}
+
+/**
+ * 获取元素中的所有链接
+ * @param {*} group 
+ */
+function getUrls(group) {
+    let imgs = [];
+    let tempUrls = [];
+    group.children.forEach((child) => {
+        if (child.type === TYPE.image) {
+            if (tempUrls.indexOf(child.url) === -1) {
+                tempUrls.push(child.url);
+                imgs.push(loadImage(child.url));
+            }
+        } else if (child.type === TYPE.group) {
+            imgs.push(...getUrls(child))
+        }
+    })
+    return imgs;
+}
+
+export { draw }

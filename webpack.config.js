@@ -1,11 +1,10 @@
 const path = require('path')
 const webpack = require('webpack')
-const CopyPlugin = require('copy-webpack-plugin')
-
 const pkg = require('./package.json')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 let config = {
-    mode: 'production',
+    mode: process.env.BUILD_TARGET,
     entry: {
         index: path.join(__dirname, './src/json2canvas.js')
     },
@@ -19,9 +18,14 @@ let config = {
         cax: 'cax'
     },
     plugins: [
-        new webpack.DefinePlugin({ "process.env.NODE_ENV": JSON.stringify("production") }),
+        new webpack.DefinePlugin({ "process.env.NODE_ENV": JSON.stringify(process.env.BUILD_TARGET) }),
         new webpack.optimize.ModuleConcatenationPlugin(),
-        new CopyPlugin([{ from: path.join(__dirname, './example/weapp/component/json2canvas'), to: path.join(__dirname, './dist_miniprogram') }]),
+        new HtmlWebpackPlugin({
+            filename: 'index.html',
+            mode: process.env.BUILD_TARGET,
+            inject: false,
+            template: './index.dev.html',
+        }),
         new webpack.NoEmitOnErrorsPlugin()
     ],
     module: {
@@ -35,6 +39,15 @@ let config = {
             }
         ] */
     }
+}
+
+if (process.env.BUILD_TARGET == 'development') {
+    config.devServer = {
+        port: 8088,
+        contentBase: path.join(__dirname, './example/web'),
+        watchContentBase: true
+    }
+    delete config.externals;
 }
 
 module.exports = config

@@ -1,7 +1,7 @@
 {
     "name": "json2canvas",
-    "version": "1.0.8",
-    "description": "通过json直接在canvas上绘制图像.基于[cax](https://github.com/dntzhang/cax),借鉴(抄袭)了[mp_canvas_drawer](https://github.com/kuckboy1994/mp_canvas_drawer).比canvas_drawer多了图片圆角支持,圆形,缩放,分组等功能.同时支持小程序和浏览器.",
+    "version": "1.0.9",
+    "description": "通过json直接在canvas上绘制图像.基于[cax](https://github.com/dntzhang/cax),借鉴(抄袭)了[mp_canvas_drawer](https://github.com/kuckboy1994/mp_canvas_drawer).比mp_canvas_drawer有更多的图形支持,图片圆角支持,缩放,分组等功能.同时支持小程序和浏览器.",
     "main": "src/json2canvas.js",
     "miniprogram": "dist_miniprogram",
     "files": [
@@ -11,7 +11,8 @@
         "README.md"
     ],
     "scripts": {
-        "build": "cross-env BUILD_TARGET=web node build/build.js",
+        "dev": "cross-env BUILD_TARGET=development webpack-dev-server --open --config webpack.config.js",
+        "build": "cross-env BUILD_TARGET=production node build/build.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
@@ -19,7 +20,8 @@
         "url": "git+https://github.com/willnewii/json2canvas.git"
     },
     "author": {
-        "name": "willnewii"
+        "name": "willnewii",
+        "email": "willnewii@163.com"
     },
     "license": "ISC",
     "bugs": {
@@ -41,12 +43,13 @@
         "@babel/preset-env": "^7.4.5",
         "@babel/runtime-corejs2": "^7.4.5",
         "babel-loader": "^8.0.6",
+        "chalk": "^2.4.2",
         "clean-webpack-plugin": "^3.0.0",
-        "copy-webpack-plugin": "^5.0.3",
         "cross-env": "^5.2.0",
         "del": "^4.1.1",
-        "fs-extra": "^8.0.1",
+        "html-webpack-plugin": "^3.2.0",
         "webpack": "^4.33.0",
-        "webpack-cli": "^3.3.4"
+        "webpack-cli": "^3.3.4",
+        "webpack-dev-server": "^3.7.1"
     }
 }
