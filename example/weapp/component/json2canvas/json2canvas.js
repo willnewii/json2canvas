@@ -36,10 +36,10 @@ function draw(option, selecter, page = null, callback) {
         handleElements({ option });
 
         stage.children.reverse();
-        stage.update();
         setTimeout(() => {
+            stage.update();
             callback && callback();
-        }, 800)
+        }, 0)
     });
 }
 
@@ -123,11 +123,14 @@ function handleGraphics({ option, parent }) {
 function handleImage({ option, parent }) {
     let bitmap = imageMap.get(option.url);
 
-    //标记位,如果一张图用到两次,应该clone.
-    bitmap.used && (bitmap = bitmap.clone())
-
     if (bitmap) {
-        bitmap.used = true;
+        //标记位,如果一张图用到两次,应该clone.
+        if(bitmap.used){
+            bitmap = bitmap.clone()
+        }else{
+            bitmap.used = true;
+        }
+        
         let width = bitmap.width;
 
         // 缩放
@@ -140,7 +143,6 @@ function handleImage({ option, parent }) {
             clipPath.arc(width / 2, width / 2, width / 2, 0, Math.PI * 2);
             bitmap.clip(clipPath);
         }
-
         return bitmap;
     }
     return null;
@@ -302,7 +304,7 @@ function _setPosition({ ele, option, value, parent }) {
     }
 }
 
-function getCtx(){
+function getCtx() {
     return isWeapp ? stage.ctx : stage.canvas.getContext("2d")
 }
 
@@ -318,11 +320,7 @@ function getGradient({ option }) {
 }
 
 function getBaseText(option) {
-    const text = new cax.Text(option.text, {
-        font: option.font,
-        color: option.color,
-        baseline: 'top'
-    });
+    const text = new cax.Text(option.text, option);
 
     let gradient = getGradient({ option });
     if (gradient) {

@@ -48,12 +48,11 @@
         <div class="view view-left">
             <div id="jsonview" class="jsonview">
             </div>
-            <input type="radio" id="1" value="1" v-model="picked">
-            <label for="1">海报1</label>
-            <br>
-            <input type="radio" id="3" value="3" v-model="picked">
-            <label for="3">样式</label>
-            <br>
+            <block v-for="item in radios">
+                <input type="radio" :id="item" :value="item" v-model="picked">
+                <label :for="item">{{item}}</label>
+                <br>
+            </block>
         </div>
         <div class="view">
             <canvas id='myCanvas'></canvas>
@@ -75,9 +74,10 @@
         var app = new Vue({
             el: '#app',
             data: {
-                picked: '3',
+                picked: '测试',
                 data: null,
-                editor: null
+                editor: null,
+                radios:[],
             },
             watch: {
                 picked: function(newValue, oldValue) {
@@ -85,6 +85,12 @@
                 }
             },
             mounted: function() {
+                let radios = [];
+                for (const key in option) {
+                    radios.push(key);
+                }
+                this.radios = radios ;
+
                 this.setCanvas(this.picked);
             },
             methods: {
