@@ -27,6 +27,7 @@ npm i json2canvas
   }
 }
 ```
+require：SDKVersion>=2.6.1
 
 ## 功能说明
 - 支持缩放 如果设计稿是750,而画布只有375时.你不需要任何换算,只需要将scale设置为0.5
