@@ -201,13 +201,10 @@ option = {
         "width": 750,
         "height": 1334,
         "scale": 0.5,
+        "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/bg_concerts_1.jpg",
+        "fillStyle":"#CCC",
         "children": [
             {
-                "type": "image",
-                "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/bg_concerts_1.jpg",
-                "width": 750,
-                "height": 1334
-            }, {
                 "type": "image",
                 "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wxapp_code.jpg",
                 "width": 100,

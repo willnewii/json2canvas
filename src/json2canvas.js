@@ -33,7 +33,7 @@ function draw(option, selecter, page = null, callback) {
             imageMap.set(url, bitmap);
         });
 
-        handleElements({ option });
+        handleGroup({ option });
 
         stage.children.reverse();
         setTimeout(() => {
@@ -43,12 +43,31 @@ function draw(option, selecter, page = null, callback) {
     });
 }
 
-function handleElements({ option, parent }) {
+function handleGroup({ option, parent }) {
     const caxGroup = new cax.Group();
     option.width && (caxGroup.width = option.width);
     option.height && (caxGroup.height = option.height);
 
     setPosition(caxGroup, option, parent);
+
+    // group 直接设置 背景图 或 背景色
+    if (option.url) {
+        let groupBg = {
+            type: TYPE.image,
+            width: option.width,
+            height: option.height,
+            url: option.url
+        }
+        option.children.unshift(groupBg);
+    } else if (option.fillStyle) {
+        let groupBg = {
+            type: TYPE.rect,
+            width: option.width,
+            height: option.height,
+            fillStyle: option.fillStyle
+        }
+        option.children.unshift(groupBg);
+    }
 
     option.children.forEach((child) => {
         let ele = null;
@@ -103,7 +122,7 @@ function handleGraphics({ option, parent }) {
     let gradient = getGradient({ option });
 
     //如果fillStyle&strokeStyle 都不填,默认fillStyle
-    if (gradient && !option.fillStyle && !option.strokeStyle) {
+    if (!option.fillStyle && !option.strokeStyle) {
         option.fillStyle = '#FFFFFF'
     }
 
@@ -125,12 +144,12 @@ function handleImage({ option, parent }) {
 
     if (bitmap) {
         //标记位,如果一张图用到两次,应该clone.
-        if(bitmap.used){
+        if (bitmap.used) {
             bitmap = bitmap.clone()
-        }else{
+        } else {
             bitmap.used = true;
         }
-        
+
         let width = bitmap.width;
 
         // 缩放
@@ -213,6 +232,10 @@ function handleText({ option, parent }) {
     return text;
 }
 
+/**
+ * 设置圆角矩形(https://github.com/dntzhang/cax/blob/master/packages/cax/src/render/display/shape/rounded-rect.js)
+ * @param {*} param0 
+ */
 function setRoundedRect({ ele, option }) {
     const r = option.r,
         ax = option.r,
@@ -253,7 +276,7 @@ function setRoundedRect({ ele, option }) {
 }
 
 /**
- * 
+ * 处理元素的位置
  * @param {*} ele canvas元素
  * @param {*} option 配置参数
  * @param {*} parent 父元素,用于计算相对位置
@@ -308,6 +331,10 @@ function getCtx() {
     return isWeapp ? stage.ctx : stage.canvas.getContext("2d")
 }
 
+/**
+ * 根据配置生成渐变色
+ * @param {*} param0 
+ */
 function getGradient({ option }) {
     let gradient = null;
     if (option.linearGradient && option.colors) {
@@ -376,9 +403,15 @@ function loadImage(url) {
 function getUrls(group) {
     let imgs = [];
     let tempUrls = [];
+
+    if (group.url) {
+        tempUrls.push(group.url);
+        imgs.push(loadImage(group.url));
+    }
+
     group.children.forEach((child) => {
         if (child.type === TYPE.image) {
-            if (tempUrls.indexOf(child.url) === -1) {
+            if (!tempUrls.includes(child.url)) {
                 tempUrls.push(child.url);
                 imgs.push(loadImage(child.url));
             }
