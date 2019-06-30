@@ -23,11 +23,15 @@
 
         .view {
             padding: 20px;
-            width: 50%;
         }
 
         .view-left {
-            border-right: #CCC solid 1px
+            border-right: #CCC solid 1px;
+            width: 30%
+        }
+
+        .view-right {
+            width: 70%
         }
 
         .jsonview {
@@ -94,7 +98,9 @@
                     if (!this.editor) {
                         this.editor = new JSONEditor(document.getElementById("jsonview"), {
                             onChangeJSON: (json) => {
+                                console.time('draw');
                                 json2canvas.draw(json, '#myCanvas');
+                                console.timeEnd('draw');
                             }
                         }, option[picked]);
                         this.editor.expandAll();
@@ -102,7 +108,9 @@
                         this.editor.update(option[picked])
                     }
 
+                    console.time('draw');
                     json2canvas.draw(option[picked], '#myCanvas');
+                    console.timeEnd('draw');
                 }
             }
 

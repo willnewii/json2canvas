@@ -15,7 +15,7 @@ Page({
    */
   onLoad: function (options) {
     this.setData({
-      dev: options.dev,
+      dev: options.dev || false,
       painting: data[options.type]
     })
   },

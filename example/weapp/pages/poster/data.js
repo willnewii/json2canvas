@@ -3,13 +3,9 @@ export default {
         "width": 750,
         "height": 1334,
         "scale": 0.5,
+        "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/bg_concerts_1.jpg",
         "children": [
             {
-                "type": "image",
-                "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/bg_concerts_1.jpg",
-                "width": 750,
-                "height": 1334
-            }, {
                 "type": "image",
                 "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
                 "width": 100,
@@ -102,133 +98,13 @@ export default {
                 "y": 1249
             }]
     },
-    "2": {
-        "width": 750,
-        "height": 1334,
-        "scale": 0.5,
-        "children": [
-            {
-                "type": "image",
-                "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/bg_concerts_1.jpg",
-                "width": 750,
-                "height": 1334
-            }, {
-                "type": "image",
-                "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
-                "width": 100,
-                "x": 48,
-                "y": 44,
-                "isCircular": true,
-            }, {
-                "type": "circle",
-                "r": 50,
-                "lineWidth": 5,
-                "strokeStyle": "#CCCCCC",
-                // "fillStyle": "#CCCCCC",
-                "x": 48,
-                "y": 44,
-            }, {
-                "type": "text",
-                "text": "歌词本",
-                "font": "30px Arial",
-                "color": "#FFFFFF",
-                "x": 168,
-                "y": 75,
-                "shadow": {
-                    "color": "#000",
-                    "offsetX": 2,
-                    "offsetY": 2,
-                    "blur": 2
-                }
-            }, {
-                "type": "image",
-                "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/medal_concerts_1.png",
-                "width": 300,
-                "x": "center",
-                "y": 361
-            }, {
-                "type": "text",
-                "text": "一生活一场 五月天",
-                "font": "38px Arial",
-                "color": "#FFFFFF",
-                "x": "center",
-                "y": 838,
-                "shadow": {
-                    "color": "#000",
-                    "offsetX": 2,
-                    "offsetY": 2,
-                    "blur": 2
-                }
-            }, {
-                "type": "text",
-                "text": "北京6场，郑州2场，登船，上班，听到你想听的歌了吗？",
-                "font": "24px Arial",
-                "color": "#FFFFFF",
-                "x": "center",
-                "y": 900,
-                // "lineHeight": 50,
-                // "maxWidth": 150,
-                // "maxLine": 3,
-                "shadow": {
-                    "color": "#000",
-                    "offsetX": 2,
-                    "offsetY": 2,
-                    "blur": 2
-                }
-            }, {
-                "type": "group",
-                "width": 750,
-                "height": 193,
-                "x": 0,
-                "y": "bottom",
-                "children": [
-                    {
-                        "type": "rect",
-                        "width": 750,
-                        "height": 193,
-                        "strokeStyle": "#CCCCCC",
-                        //"linearGradient": [0, 0, 750, 0],
-                        //"colors": [[0, "black"], ["0.3", "magenta"], ["0.5", "blue"], ["0.6", "green"], ["0.8", "yellow"], [1, "red"]],
-                        "x": 0,
-                        "y": 0
-                    }, {
-                        "type": "image",
-                        "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wxapp_code.jpg",
-                        "width": 117,
-                        "height": 117,
-                        "x": 47,
-                        "y": 39
-                    }, {
-                        "type": "text",
-                        "text": "长按识别小程序二维码",
-                        "font": "26px Arial",
-                        "color": "#858687",
-                        "x": 192,
-                        "y": 61
-                    }, {
-                        "type": "text",
-                        "text": "加入五月天 永远不会太迟",
-                        "font": "18px Arial",
-                        "color": "#A4A5A6",
-                        "x": 192,
-                        "y": 108
-                    }]
-            },
-        ]
-    },
     "3": {
         "width": 750,
         "height": 1334,
-        "scale": 0.8,
+        "scale": 0.5,
+        "fillStyle": "#40395A",
         "children": [
             {
-                "type": "rect",
-                "width": 750,
-                "height": 1334,
-                "fillStyle": "#40395A",
-                "x": 0,
-                "y": 0
-            }, {
                 "type": "group",
                 "x": 48,
                 "y": 20,
@@ -409,6 +285,16 @@ export default {
                     "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
                     "x": 0,
                     "y": 460,
+                }, {
+                    "type": "text",
+                    "text": "aa11人生若只如初见，何事秋风悲画扇11aa",
+                    "orientation": "vertical",
+                    "font": "24px Arial",
+                    "color": "#FFFFFF",
+                    "linearGradient": [0, 0, 0, 200],
+                    "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                    "x": 400,
+                    "y": 0,
                 }]
             }]
     }
