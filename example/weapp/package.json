@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "json2canvas": "^1.0.9"
+    "json2canvas": "^1.0.10"
   }
 }

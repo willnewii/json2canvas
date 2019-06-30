@@ -2,16 +2,10 @@ option = {
     "测试": {
         "width": 750,
         "height": 1334,
-        "scale": 0.8,
+        "scale": 0.6,
+        "fillStyle": "#40395A",
         "children": [
             {
-                "type": "rect",
-                "width": 750,
-                "height": 1334,
-                "fillStyle": "#40395A",
-                "x": 0,
-                "y": 0
-            }, {
                 "type": "group",
                 "x": 48,
                 "y": 20,
@@ -122,7 +116,7 @@ option = {
                     "type": "circle",
                     "r": 50,
                     "lineWidth": 5,
-                    "linearGradient": [0, 0, 0, 100],
+                    "linearGradient": [0, 0, 0, 200],
                     "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
                     "strokeStyle": "#CCCCCC",
                     "x": 150,
@@ -177,7 +171,7 @@ option = {
                     "lineHeight": 40
                 }, {
                     "type": "text",
-                    "text": "我是一段文字,我会自动换行，我最多只显示两行:有没有那么 永远不改变 拥word抱过的美丽 都再也不mayday破碎 让险峻岁月不能 在脸上撒野 让生离和死别都遥远",
+                    "text": "我是一段文字,我会\n自动换行，我最多只显示两行:有没有那么 永远不改变 拥word抱过的美丽 都再也不mayday破碎 让险峻岁月不能 在脸上撒野 让生离和死别都遥远",
                     "font": "24px Arial",
                     "color": "#FFFFFF",
                     "x": 0,
@@ -194,20 +188,27 @@ option = {
                     "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
                     "x": 0,
                     "y": 460,
+                }, {
+                    "type": "text",
+                    "text": "aa11人生若只如初见，何事秋风悲画扇11aa",
+                    "orientation": "vertical",
+                    "font": "24px Arial",
+                    "color": "#FFFFFF",
+                    "linearGradient": [0, 0, 0, 200],
+                    "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                    "x": 400,
+                    "y": 0,
                 }]
             }]
     },
     "海报样式1": {
         "width": 750,
         "height": 1334,
-        "scale": 0.5,
+        "scale": 0.6,
+        "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/bg_concerts_1.jpg",
+        "fillStyle": "#CCC",
         "children": [
             {
-                "type": "image",
-                "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/bg_concerts_1.jpg",
-                "width": 750,
-                "height": 1334
-            }, {
                 "type": "image",
                 "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wxapp_code.jpg",
                 "width": 100,
@@ -256,6 +257,7 @@ option = {
             }, {
                 "type": "text",
                 "text": "北京6场，郑州2场，登船，上班，听到你想听的歌了吗？",
+                // "orientation": "vertical",
                 "font": "24px Arial",
                 "color": "#FFFFFF",
                 "x": "center",

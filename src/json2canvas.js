@@ -1,13 +1,10 @@
 import cax from "cax";
+import { isWeapp, getGradient, TYPE } from "./cax/util";
+import Text from "./cax/text";
+import Graphics from "./cax/graphics";
+import TreeModel from "tree-model";
 
-const isWeapp = typeof wx !== 'undefined' && !wx.createCanvas;
-const TYPE = {
-    rect: 'rect',
-    circle: 'circle',
-    image: 'image',
-    text: 'text',
-    group: 'group'
-};
+const tree = new TreeModel();
 
 let stage = null;
 let imageMap = new Map();
@@ -25,37 +22,68 @@ function draw(option, selecter, page = null, callback) {
     }
     stage.scale = option.scale;
 
-    // 获取所有元素的图片链接
-    let preImgs = getUrls(option);
+    //前置处理
+    const root = tree.parse(option);
 
-    Promise.all(preImgs).then((results) => {
+    // 第一次遍历:1.处理url 2.判断parent是否设置了背景
+    let urls = [];
+    let loadImages = [];
+    root.all().forEach((item) => {
+        let option = item.model;
+        if (option.url && !urls.includes(option.url)) {
+            urls.push(option.url);
+            loadImages.push(loadImage(option.url));
+        }
+
+        if (option.type === TYPE.group || item.hasChildren()) {
+            if (option.url) {
+                let groupBg = {
+                    type: TYPE.image,
+                    width: option.width,
+                    height: option.height,
+                    url: option.url
+                }
+                item.addChildAtIndex(tree.parse(groupBg), 0)
+            } else if (option.fillStyle) {
+                let groupBg = JSON.parse(JSON.stringify(option));
+                delete groupBg.children;
+                groupBg.type = TYPE.rect;
+                groupBg.x = 0;
+                groupBg.y = 0;
+
+                item.addChildAtIndex(tree.parse(groupBg), 0)
+            }
+        }
+    });
+
+    Promise.all(loadImages).then((results) => {
         results.forEach(({ url, bitmap }) => {
             imageMap.set(url, bitmap);
         });
 
-        handleElements({ option });
+        stage.add(handleGroup({ option: root.model }));
 
-        stage.children.reverse();
         setTimeout(() => {
             stage.update();
             callback && callback();
         }, 0)
     });
+
 }
 
-function handleElements({ option, parent }) {
+function handleGroup({ option, parent }) {
     const caxGroup = new cax.Group();
     option.width && (caxGroup.width = option.width);
     option.height && (caxGroup.height = option.height);
 
     setPosition(caxGroup, option, parent);
 
-    option.children.forEach((child) => {
+    option.children && option.children.forEach((child) => {
         let ele = null;
         let param = { option: child, parent: caxGroup };
         switch (child.type) {
             case TYPE.group:
-                handleElements(param);
+                ele = handleGroup(param);
                 break;
             case TYPE.rect:
             case TYPE.circle:
@@ -71,51 +99,11 @@ function handleElements({ option, parent }) {
         ele && caxGroup.add(ele);
     });
 
-    stage.add(caxGroup);
+    return caxGroup;
 }
 
 function handleGraphics({ option, parent }) {
-    option = Object.assign({
-        lineWidth: 1,
-        lt: true,
-        rt: true,
-        lb: true,
-        rb: true
-    }, option)
-    const ele = new cax.Graphics();
-    ele.beginPath();
-
-    switch (option.type) {
-        case TYPE.rect:
-            if (option.r > 0) {
-                setRoundedRect({ ele, option });
-            } else {
-                ele.rect(0, 0, option.width, option.height)
-            }
-            break;
-        case TYPE.circle:
-            ele.arc(0, 0, option.r, 0, Math.PI * 2, false);
-            break;
-    }
-
-    ele.closePath();
-
-    let gradient = getGradient({ option });
-
-    //如果fillStyle&strokeStyle 都不填,默认fillStyle
-    if (gradient && !option.fillStyle && !option.strokeStyle) {
-        option.fillStyle = '#FFFFFF'
-    }
-
-    if (option.fillStyle) {
-        ele.fillStyle(gradient || option.fillStyle);
-        ele.fill();
-    } else if (option.strokeStyle) {
-        ele.lineWidth(option.lineWidth)
-        ele.strokeStyle(gradient || option.strokeStyle);
-        ele.stroke();
-    }
-
+    const ele = new Graphics(option);
     setPosition(ele, option, parent);
     return ele;
 }
@@ -125,12 +113,12 @@ function handleImage({ option, parent }) {
 
     if (bitmap) {
         //标记位,如果一张图用到两次,应该clone.
-        if(bitmap.used){
+        if (bitmap.used) {
             bitmap = bitmap.clone()
-        }else{
+        } else {
             bitmap.used = true;
         }
-        
+
         let width = bitmap.width;
 
         // 缩放
@@ -149,111 +137,19 @@ function handleImage({ option, parent }) {
 }
 
 function handleText({ option, parent }) {
-    let text = getBaseText(option);
-    // coolzjy@v2ex 提供的正则 https://regexr.com/4f12l 
-    const pattern = /\b(?![\u0020-\u002F\u003A-\u003F\u2000-\u206F\u2E00-\u2E7F\u3000-\u303F\uFF00-\uFF1F])|(?=[\u2E80-\u2FFF\u3040-\u9FFF])/g
+    const text = new Text(option.text, option);
+    // const text = new cax.Text(option.text, option);
 
-    if (option.maxWidth && (text.getWidth() > option.maxWidth)) {//折行处理
-        let fillText = ''
-        let fillTop = option.y
-        let lineNum = 1
-
-        //获取可折行的下标
-        let breakLines = [];
-        option.text.replace(pattern, function () {
-            breakLines.push(arguments[arguments.length - 2] - 1);
-        });
-
-        let tempBreakLine = 0;
-        for (let i = 0; i < option.text.length; i++) {
-            if (breakLines.indexOf(i) !== -1) {
-                tempBreakLine = i;
-            }
-
-            fillText += [option.text[i]]
-            text.text = fillText
-            if (text.getWidth() > option.maxWidth) {
-                let temp = getBaseText(option);
-
-                if (lineNum === option.maxLine && i !== option.text.length) {
-                    temp.text = fillText.substring(0, fillText.length - 1) + '...';
-                    fillText = '';
-                } else {
-                    if (tempBreakLine === i) {
-                        temp.text = fillText;
-                        fillText = '';
-                    } else {
-                        temp.text = fillText.substring(0, fillText.length - (i - tempBreakLine));
-                        fillText = fillText.substring(fillText.length - (i - tempBreakLine), fillText.length);
-                    }
-                }
-                _setPosition({ ele: temp, option, value: 'x', parent });
-                temp.y = fillTop;
-                parent.add(temp);
-
-                if (lineNum === option.maxLine && i !== option.text.length) {
-                    break;
-                }
-
-                fillTop += option.lineHeight || 0;
-                lineNum++
-            }
-        }
-
-        if (!fillText) {
-            return;
-        }
-
-        text.text = fillText;
-        _setPosition({ ele: text, option, value: 'x', parent });
-        text.y = fillTop;
-    } else {
-        setPosition(text, option, parent);
+    if (option.shadow) {
+        text.shadow = option.shadow;
     }
+    setPosition(text, option, parent);
+
     return text;
 }
 
-function setRoundedRect({ ele, option }) {
-    const r = option.r,
-        ax = option.r,
-        ay = 0,
-        bx = option.width,
-        by = 0,
-        cx = option.width,
-        cy = option.height,
-        dx = 0,
-        dy = option.height,
-        ex = 0,
-        ey = 0
-
-    ele.moveTo(ax, ay)
-    if (option.rt) {
-        ele.arcTo(bx, by, cx, cy, r)
-    } else {
-        ele.lineTo(bx, by)
-    }
-
-    if (option.rb) {
-        ele.arcTo(cx, cy, dx, dy, r)
-    } else {
-        ele.lineTo(cx, cy)
-    }
-
-    if (option.lb) {
-        ele.arcTo(dx, dy, ex, ey, r)
-    } else {
-        ele.lineTo(dx, dy)
-    }
-
-    if (option.lt) {
-        ele.arcTo(ex, ey, ax, ay, r)
-    } else {
-        ele.lineTo(ex, ey)
-    }
-}
-
 /**
- * 
+ * 处理元素的位置
  * @param {*} ele canvas元素
  * @param {*} option 配置参数
  * @param {*} parent 父元素,用于计算相对位置
@@ -304,36 +200,6 @@ function _setPosition({ ele, option, value, parent }) {
     }
 }
 
-function getCtx() {
-    return isWeapp ? stage.ctx : stage.canvas.getContext("2d")
-}
-
-function getGradient({ option }) {
-    let gradient = null;
-    if (option.linearGradient && option.colors) {
-        gradient = getCtx().createLinearGradient(...option.linearGradient);
-        for (let i = 0; i < option.colors.length; i++) {
-            gradient.addColorStop(...option.colors[i]);
-        }
-    }
-    return gradient;
-}
-
-function getBaseText(option) {
-    const text = new cax.Text(option.text, option);
-
-    let gradient = getGradient({ option });
-    if (gradient) {
-        text.color = gradient;
-    }
-
-    if (option.shadow) {
-        text.shadow = option.shadow;
-    }
-
-    return text;
-}
-
 /**
  * 加载图片
  */
@@ -367,26 +233,6 @@ function loadImage(url) {
             img.src = url;
         }
     });
-}
-
-/**
- * 获取元素中的所有链接
- * @param {*} group 
- */
-function getUrls(group) {
-    let imgs = [];
-    let tempUrls = [];
-    group.children.forEach((child) => {
-        if (child.type === TYPE.image) {
-            if (tempUrls.indexOf(child.url) === -1) {
-                tempUrls.push(child.url);
-                imgs.push(loadImage(child.url));
-            }
-        } else if (child.type === TYPE.group) {
-            imgs.push(...getUrls(child))
-        }
-    })
-    return imgs;
 }
 
 export { draw }
