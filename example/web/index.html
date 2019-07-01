@@ -74,10 +74,10 @@
         var app = new Vue({
             el: '#app',
             data: {
-                picked: '测试',
+                picked: '元素测试',
                 data: null,
                 editor: null,
-                radios:[],
+                radios: [],
             },
             watch: {
                 picked: function(newValue, oldValue) {
@@ -89,8 +89,12 @@
                 for (const key in option) {
                     radios.push(key);
                 }
-                this.radios = radios ;
+                this.radios = radios;
 
+                let url = new URL(window.location.href)
+                let param = new URLSearchParams(url.search);
+                param.get('picked') && (this.picked = param.get('picked'))
+                
                 this.setCanvas(this.picked);
             },
             methods: {

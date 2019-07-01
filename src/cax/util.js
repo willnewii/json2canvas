@@ -23,6 +23,10 @@ function getCtx() {
     // return isWeapp ? stage.ctx : stage.canvas.getContext("2d")
 }
 
+function copy(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
 const isWeapp = typeof wx !== 'undefined' && !wx.createCanvas && wx.createCanvasContext;
 const isWegame = typeof wx !== 'undefined' && wx.createCanvas;
 
@@ -34,4 +38,4 @@ const TYPE = {
     group: 'group'
 };
 
-export { getGradient, isWeapp, isWegame, TYPE }
+export { getGradient, isWeapp, isWegame, TYPE, copy }

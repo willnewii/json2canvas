@@ -1,5 +1,5 @@
 import cax from "cax";
-import { isWeapp, getGradient, TYPE } from "./cax/util";
+import { isWeapp, TYPE, copy } from "./cax/util";
 import Text from "./cax/text";
 import Graphics from "./cax/graphics";
 import TreeModel from "tree-model";
@@ -10,32 +10,34 @@ let stage = null;
 let imageMap = new Map();
 
 function draw(option, selecter, page = null, callback) {
-    option = Object.assign({
+    const root = tree.parse(Object.assign({
         scale: 1,
-    }, option)
+    }, copy(option)));
 
-    const params = [option.width * option.scale, option.height * option.scale, selecter];
+    restElement(root);
+
+    const params = [root.model.width * root.model.scale, root.model.height * root.model.scale, selecter];
     if (isWeapp) {
         stage = new cax.Stage(...params, page);
     } else {
         stage = new cax.Stage(...params);
     }
-    stage.scale = option.scale;
+    stage.scale = root.model.scale;
 
-    //前置处理
-    const root = tree.parse(option);
-
-    // 第一次遍历:1.处理url 2.判断parent是否设置了背景
+    /**
+     * 1.处理需要加载的url 
+     * 2.parent背景处理
+     */
     let urls = [];
     let loadImages = [];
-    root.all().forEach((item) => {
+    root.all().forEach((item, index) => {
         let option = item.model;
         if (option.url && !urls.includes(option.url)) {
             urls.push(option.url);
             loadImages.push(loadImage(option.url));
         }
 
-        if (option.type === TYPE.group || item.hasChildren()) {
+        if ((option.type === TYPE.group || index === 0) && option.width && option.height) {
             if (option.url) {
                 let groupBg = {
                     type: TYPE.image,
@@ -45,7 +47,7 @@ function draw(option, selecter, page = null, callback) {
                 }
                 item.addChildAtIndex(tree.parse(groupBg), 0)
             } else if (option.fillStyle) {
-                let groupBg = JSON.parse(JSON.stringify(option));
+                let groupBg = copy(option);
                 delete groupBg.children;
                 groupBg.type = TYPE.rect;
                 groupBg.x = 0;
@@ -137,7 +139,7 @@ function handleImage({ option, parent }) {
 }
 
 function handleText({ option, parent }) {
-    const text = new Text(option.text, option);
+    const text = new Text(option);
     // const text = new cax.Text(option.text, option);
 
     if (option.shadow) {
@@ -231,6 +233,38 @@ function loadImage(url) {
                 resolve({ url, bitmap: null });
             };
             img.src = url;
+        }
+    });
+}
+
+/**
+ * 更新元素位置
+ * @param {} root 
+ */
+function restElement(root) {
+    root.all().forEach((item) => {
+        let option = item.model;
+        if (option.type === TYPE.text && option.height === 'auto') {
+            let text = new Text(option);
+            let height = text.getHeight() - (option.uiheight || 0);
+            console.log(height);
+            
+            item.getPath().forEach((node, index, array) => {
+                //更新父元素的高度
+                if (index !== (array.length - 1)) {
+                    node.model.height += height;
+                }
+
+                // 更新兄弟元素y值
+                if (index !== 0) {
+                    let parent = array[index - 1];
+                    parent.children.slice(node.getIndex() + 1, parent.children.length).forEach((item) => {
+                        if (!item.model.pin) {
+                            item.model.y += height;
+                        }
+                    });
+                }
+            });
         }
     });
 }

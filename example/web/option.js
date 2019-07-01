@@ -1,5 +1,5 @@
 option = {
-    "测试": {
+    "元素测试": {
         "width": 750,
         "height": 1334,
         "scale": 0.6,
@@ -297,5 +297,104 @@ option = {
                 "x": 192,
                 "y": 1249
             }]
+    },
+    "海报样式2": {
+        "width": 750,
+        "height": 1370,
+        "scale": 0.6,
+        "fillStyle": "#FFE410",
+        "children": [
+            {
+                "type": "image",
+                "url": "http://blog-res.mayday5.me/img/%E5%8A%A8%E6%80%81%E6%96%87%E6%9C%AC_%E5%A4%B4.jpg",
+                "width": 750,
+                "height": 70,
+                "x": 0,
+                "y": 0,
+            },
+            {
+                "type": "group",
+                "width": 722,
+                "height": 990,
+                "fillStyle": "#FFFFFF",
+                "r": 20,
+                "lb": false,
+                "rb": false,
+                "x": 14,
+                "y": 84,
+                "children": [
+                    {
+                        "type": "image",
+                        "url": "https://tvax3.sinaimg.cn/crop.0.0.649.649.180/006Q5oMlly8flbvxffdvdj30i10i17wh.jpg",
+                        "width": 80,
+                        "x": 48,
+                        "y": -40,
+                        "isCircular": true,
+                    }, {
+                        "type": "circle",
+                        "r": 40,
+                        "lineWidth": 5,
+                        "strokeStyle": "#FFFFFF",
+                        "x": 48,
+                        "y": -40,
+                    }, {
+                        "type": "text",
+                        "text": "小咸鱼",
+                        "font": "24px Arial",
+                        "color": "#000000",
+                        "x": 55,
+                        "y": 60
+                    }, {
+                        "type": "text",
+                        "text": "发表了一条动态",
+                        "font": "24px Arial",
+                        "color": "#BFBFBF",
+                        "x": 55,
+                        "y": 96
+                    }, {
+                        "type": "text",
+                        "text": "我是一个没有背景色的主题",
+                        "font": "24px Arial",
+                        "color": "#49A9D6",
+                        "textAlign": "right",
+                        "x": 690,
+                        "y": 79,
+                    }, {
+                        "type": "text",
+                        "text": "6 / 27",
+                        "font": "24px Arial",
+                        "color": "#BFBFBF",
+                        "x": 55,
+                        "y": 166
+                    }, {
+                        "type": "text",
+                        "text": "有没有那么一朵玫瑰\n永远不凋谢\n永远骄傲和完美\n永远不妥协\n为何人生最后会像\n一张纸屑\n还不如一片花瓣\n曾经鲜艳\n有没有那么一张书签\n停止那一天\n最单纯的笑脸和\n最美那一年",
+                        "maxWidth": 580,
+                        "lineHeight": 40,
+                        "font": "30px Arial",
+                        "color": "#333333",
+                        "height": "auto",
+                        "uiheight": 750,
+                        "x": 55,
+                        "y": 206
+                    }
+                ]
+            }, {
+                "type": "group",
+                "url": "http://blog-res.mayday5.me/img/%E5%8A%A8%E6%80%81%E6%96%87%E6%9C%AC_%E5%B0%BE.jpg",
+                "width": 750,
+                "height": 318,
+                "x": 0,
+                "y": 1056,
+                "children": [{
+                    "type": "text",
+                    "font": "24px Arial",
+                    "color": "#333333",
+                    "text": "我是二维码",
+                    "x": 600,
+                    "y": 150,
+                }]
+            }
+        ]
     }
 }

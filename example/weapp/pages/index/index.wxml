@@ -1,7 +1,8 @@
 <!--index.wxml-->
 <view class="container">
   <view class="userinfo">
-    <button class="btn" data-type="3" bindtap="bindViewTap"> 示例1-元素展示 </button>
-    <button class="btn" data-type="1" bindtap="bindViewTap"> 示例2-海报2 </button>
+    <button class="btn" data-type="1" bindtap="bindViewTap"> 示例1-元素展示 </button>
+    <button class="btn" data-type="2" bindtap="bindViewTap"> 示例2-海报1 </button>
+    <button class="btn" data-type="3" bindtap="bindViewTap"> 示例3-海报2 </button>
   </view>
 </view>
