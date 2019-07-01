@@ -18,6 +18,7 @@ git clone https://github.com/willnewii/json2canvas.git
 - 支持图片圆角
 - 支持圆型,矩形,矩形圆角(背景色支持线性渐变)
 - 文本支持竖排,长文本自动换行
+- [支持动态文本](http://blog.mayday5.me/json2canvas/doc/动态文本)
 - 支持分组(cax里很好用的一个功能)  [说明](https://github.com/dntzhang/cax/blob/master/README.CN.md)
 
 ## 小程序添加json2canvas组件
@@ -34,7 +35,7 @@ require：SDKVersion>=2.6.1
 }
 ```
 
-## [元素属性说明](./doc/元素.md)
+## [元素属性说明](http://blog.mayday5.me/json2canvas/doc/元素)
 
 ## 借鉴和引用
 - [竖排计算 张鑫旭大神的博客](http://www.zhangxinxu.com/wordpress/?p=7362)

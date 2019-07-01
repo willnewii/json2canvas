@@ -10,7 +10,7 @@ if (isWeapp) {
 }
 
 class Text extends Graphics {
-  constructor(text, option) {
+  constructor(option) {
     super()
 
     option = Object.assign({
@@ -21,7 +21,7 @@ class Text extends Graphics {
       orientation: 'horizontal'
     }, option)
     this.option = option || {}
-    this.text = text
+    this.text = option.text;
   }
 
   getWidth(word) {
