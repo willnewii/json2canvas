@@ -41,3 +41,10 @@ require：SDKVersion>=2.6.1
 - [竖排计算 张鑫旭大神的博客](http://www.zhangxinxu.com/wordpress/?p=7362)
 - [coolzjy@v2ex 正则优化断行](https://regexr.com/4f12l)
 - [mp_canvas_drawer](https://github.com/kuckboy1994/mp_canvas_drawer)
+
+
+## issue
+- 如果有元素使用auto,后面的元素y值应该怎么设置更合理?
+按照设计稿填写。本来想的是，如果有元素出现auto,那么后面的直接y值累加更简单,但这种情况仅使用流式且没有边距的情况,处理场景太单一.
+
+- 如果出现auto,canvas 高度的设置问题

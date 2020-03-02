@@ -14,7 +14,7 @@ function draw(option, selecter, page = null, callback) {
         scale: 1,
     }, copy(option)));
 
-    restElement(root);
+    updateElementPostion(root);
 
     const params = [root.model.width * root.model.scale, root.model.height * root.model.scale, selecter];
     if (isWeapp) {
@@ -182,11 +182,11 @@ function _setPosition({ ele, option, value, parent }) {
         case 'bottom':
             switch (option.type) {
                 case TYPE.image:
-                    ele[value] = (parent ? parent.height : (option.height / option.scale)) - ele.height * ele.scale;
+                    ele[value] = parent.height - ele.height * ele.scale;
                     break;
                 case TYPE.rect:
                 case TYPE.group:
-                    ele[value] = (parent ? parent.height : (option.height / option.scale)) - option.height;
+                    ele[value] = parent.height - option.height;
                     break;
             }
             break;
@@ -241,25 +241,20 @@ function loadImage(url) {
  * 更新元素位置
  * @param {} root 
  */
-function restElement(root) {
+function updateElementPostion(root) {
     root.all().forEach((item) => {
         let option = item.model;
         if (option.type === TYPE.text && option.height === 'auto') {
             let text = new Text(option);
             let height = text.getHeight() - (option.uiheight || 0);
-            console.log(height);
-            
-            item.getPath().forEach((node, index, array) => {
-                //更新父元素的高度
-                if (index !== (array.length - 1)) {
-                    node.model.height += height;
-                }
 
-                // 更新兄弟元素y值
-                if (index !== 0) {
-                    let parent = array[index - 1];
+            item.getPath().forEach((node, index, array) => {
+                if (index === 0) {//更新根元素的高度
+                    node.model.height += height;
+                } else {// 更新相关元素
+                    let parent = node.parent;
                     parent.children.slice(node.getIndex() + 1, parent.children.length).forEach((item) => {
-                        if (!item.model.pin) {
+                        if (!item.model.pin && !isNaN(parseInt(item.model.y))) {
                             item.model.y += height;
                         }
                     });

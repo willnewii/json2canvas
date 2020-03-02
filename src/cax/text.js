@@ -122,14 +122,14 @@ class Text extends Graphics {
    * isMeasure 如果为测量模式,只返回计算的文本高度
    */
   renderBreakLine({ ctx, isMeasure = false }) {
-    // coolzjy@v2ex 提供的正则 https://regexr.com/4f12l 
+    // coolzjy@v2ex 提供的正则 https://regexr.com/4f12l 优化可断行的位置
     const pattern = /\b(?![\u0020-\u002F\u003A-\u003F\u2000-\u206F\u2E00-\u2E7F\u3000-\u303F\uFF00-\uFF1F])|(?=[\u2E80-\u2FFF\u3040-\u9FFF])/g
 
     let fillText = ''
     let fillTop = 0
     let lineNum = 1
 
-    //获取可折行的下标
+    //获取可断行的下标
     let breakLines = [];
     this.option.text.replace(pattern, function () {
       breakLines.push(arguments[arguments.length - 2] - 1);
@@ -146,11 +146,12 @@ class Text extends Graphics {
       // 支持 \n 换行
       if (this.getWidth(fillText) > this.option.maxWidth || this.option.text[i].charCodeAt(0) === 10) {
         let tempText = '';
+        //最大行数限制
         if (lineNum === this.option.maxLine && i !== this.option.text.length) {
           tempText = fillText.substring(0, fillText.length - 1) + '...';
           fillText = '';
         } else {
-          if (tempBreakLine === i) {
+          if (tempBreakLine === i || this.option.text[i].charCodeAt(0) === 10) {
             tempText = fillText;
             fillText = '';
           } else {
