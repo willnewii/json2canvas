@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <meta charset="UTF-8">
+    <title>json2canvas 调试</title>
+    <link href="./jsoneditor.min.css" rel="stylesheet">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #FFFFFF
+        }
+
+        .app {
+            height: 100%;
+            display: flex;
+            flex-direction: row
+        }
+
+        .view {
+            padding: 20px;
+        }
+
+        .view-left {
+            border-left: #CCC solid 1px;
+            flex: 1;
+        }
+
+
+        .jsonview {
+            width: 100%;
+            height: 900px;
+            overflow: scroll;
+        }
+
+        canvas {
+            border: #CCC 1px solid
+        }
+
+        .drag-w{
+            display: flex;
+        }
+        .drag-view-w{
+            width: 450px;
+            border: 2px dashed goldenrod;
+        }
+        .drag-view{
+            height: 1344px;
+            width: 750px;
+            position: relative;
+            overflow: hidden;
+            
+        }
+        .drag-view div{
+            position: absolute;
+            cursor: pointer;
+            box-sizing: border-box;
+            user-select: none;
+        }
+        
+        .drag-view div.active{
+            outline: 1px dashed #ccc;
+        }
+        .drag-view div:hover{
+            outline: 1px dashed #ccc;
+        }
+        .drag-view div.group.active{
+            outline: 1px dashed orange;
+        }
+        .drag-view div.group:hover{
+            outline: 1px dashed orange;
+        }
+
+        .drag-operate{
+            border-left: #CCC solid 1px;
+            border-right:#CCC solid 1px;
+            margin-left: 20px;
+            padding:0 40px 0 20px;
+            overflow: auto;
+            height: 100%;
+
+        }
+        input[type=number]{
+            width: 80px;
+        }
+        textarea{
+            width: 100%;
+            min-height: 58px;
+        }
+        p{
+            padding: 0.6em 0;
+            margin: 0;
+        }
+        .adds{
+            text-align: right;
+            padding-right: 40px;
+            box-sizing: border-box;
+        }
+        .group{
+            min-width: 100px;
+            min-height: 100px;
+        }
+        .image{
+            min-width: 40px;
+            min-height: 40px;
+            font-size: 0;
+        }
+        .image img{
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .text{
+            white-space: nowrap;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div  id="app">
+        <h1>名片编辑器</h1>
+        <div><button @click="preview">预览数据</button><button @click="downloadData">导出数据</button><button @click="downloadImg">导出图片</button> <button @click="slideType">切换编辑方式</button></div>
+        <div class="adds" @click.stop="">
+            <button v-for="item in config" @click="addNode(item)">添加{{item.name}}</button>
+            <button @click="deleteed">删除</button>
+            <button @click="cleared">清空</button>
+        </div>
+        <div>
+            <label v-for="item in radios">
+                    <input type="radio" :id="item" :value="item" v-model="picked">
+                    <label :for="item">{{item}}</label>
+            </label>
+            <input type="file" @change="onfile">
+        </div>
+        <div class="app" @click="currentTarget=null">
+                <div class="view">
+                    <canvas id='myCanvas'></canvas>
+                </div>
+                <div class="view view-left" v-show="json">
+                    <div id="jsonview" class="jsonview"></div>
+                </div>
+                <div class="drag-w view view-left" v-show="!json">
+                    <div>
+                        <div class="drag-view-w">
+                            <div class="drag-view" :style="viewStyle(result)"  >
+                                <template v-for="(item,index) in result.children">
+                                    <div class="group" 
+                                    v-if="item.type=='group'" 
+                                    :style="styles(item)"
+                                    :class="{active:currentTarget == item}" 
+                                    @mousedown="mousedown($event,item)"
+                                    @click.stop=""
+                                    >
+                                        <template v-for="(child , index) in item.children" >
+                                            <div
+                                            :class="[currentTarget == child ? 'active':'',child.type]"
+                                            :style="styles(child)"
+                                            @mousedown.stop="mousedown($event,child)"
+                                            @click.stop=""
+                                            >{{child.text || "" }}<img :src="child.url" alt="" v-if="child.type=='image'" draggable="false"></div>
+                                        </template>
+                                    </div>
+                                    <div 
+                                    v-else
+                                    :style="styles(item)"
+                                    :class="[currentTarget == item ? 'active':'',item.type]"
+                                    @mousedown="mousedown($event,item)"
+                                    @click.stop=""
+                                    >{{item.text || ""}} <img :src="item.url" alt="" v-if="item.type=='image'" draggable="false"></div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                    <div :style="{height: result.height * result.scale + 'px' }">
+                        <div class="drag-operate" @click.stop="">
+                            <form v-if="currentType">
+                                <h2>当前编辑属性： {{currentType.name}}</h2>
+                                <ul >
+                                    <li>
+                                        <b>位置</b>
+                                        <p>
+                                            x: <input type="text" v-model="currentTarget.x"><br/> 
+                                            y: <input type="text" v-model="currentTarget.y">
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <b>宽高</b>
+                                        <p>
+                                            宽：<input type="text" name="width" v-model.number="currentTarget.width"><br/> 
+                                            高：<input type="text" name="height" v-model.number="currentTarget.height">
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <b>组件的fid</b>
+                                        <p>
+                                            <input type="text" name="fid" v-model="currentTarget.fid" placeholder="fid">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.url">
+                                        <b>背景图</b>
+                                        <p>
+                                            <textarea name="url" v-model="currentTarget.url" ></textarea>
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.text">
+                                        <b>内容</b>
+                                        <p>
+                                            <textarea name="text" v-model="currentTarget.text"></textarea>
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.text">
+                                        <b>字体颜色</b>
+                                        <p>
+                                            <input type="text" name="color" placeholder="#ffffff" v-model="currentTarget.color">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.orientation">
+                                        <b>文字方向</b>
+                                        <p>
+                                            <label><input type="radio" name="orientation" value="horizontal" v-model="currentTarget.orientation">水平</label>
+                                            <label><input type="radio" name="orientation" value="vertical" v-model="currentTarget.orientation">垂直</label>
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.textAlign"> 
+                                        <b>文本对齐方式</b>
+                                        <p>
+                                            <input type="text"  placeholder="textAlign" v-model="currentTarget.textAlign">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.maxWidth">
+                                        <b>最大宽度</b>
+                                        <p>
+                                            <input type="number" name="maxWidth" v-model.number="currentTarget.maxWidth">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.lineHeight">
+                                        <b>行高</b>
+                                        <p>
+                                            <input type="number" name="lineHeight" v-model.number="currentTarget.lineHeight">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.maxLine" >
+                                        <b>行数</b>
+                                        <p>
+                                            <input type="text" name="maxLine" v-model.number="currentTarget.maxLine">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.shadow">
+                                        <b>阴影</b>
+                                        <p>
+                                            color:<input type="text" name="shadow"  v-model="shadow.color"><br/>
+                                            offsetY:<input type="text" name="shadow" v-model="shadow.offsetY"><br/>
+                                            offsetYblur:<input type="text" name="shadow" v-model="shadow.offsetYblur">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.font">
+                                        <b>字体和大小</b>
+                                        <p>
+                                            <input type="text" name="font" placeholder="30px Arial" v-model="currentTarget.font">
+                                        </p>
+                                    </li>
+                                   
+                                    <li v-if="currentType.fields.linearGradient">
+                                        <b>渐变</b>
+                                        <p>
+                                            x1:<input type="number" name="linearGradient" v-model="linearGradient[0]"><br/>
+                                            y1:<input type="number" name="linearGradient" v-model="linearGradient[1]"><br/>
+                                            x2:<input type="number" name="linearGradient" v-model="linearGradient[2]"><br/>
+                                            y2:<input type="number" name="linearGradient" v-model="linearGradient[3]">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.colors">
+                                        <b>填充颜色</b>
+                                        <p>
+                                            <textarea name="colors" v-model="colors" placeholder="[[0,'#CCC'],[0.2,'#AAA'],[1,'#AAA']]"></textarea>
+                                        </p>
+                                    </li>
+                                    <li  v-if="currentType.fields.isCircular">
+                                        <b><label>是否圆角<input type="checkbox" name="isCircular" v-model="currentTarget.isCircular"></label></b>
+                                    </li>
+                                    <li v-if="currentType.fields.compress">
+                                        <b>压缩比例</b>
+                                        <p><input type="input" v-model="currentTarget.compress"></p>
+                                    </li>
+                                    <li v-if="currentType.fields.r">
+                                        <b>半径</b>
+                                        <p>
+                                            <input type="text" name="r" v-model="currentTarget.r">
+                                        </p>
+                                    </li>
+                                    <li  v-if="currentType.fields.strokeStyle">
+                                        <b>边框颜色</b>
+                                        <p>
+                                            <input type="text" name="strokeStyle" v-model="currentTarget.strokeStyle" placeholder="#fffff">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.lineWidth">
+                                        <b>边框宽度</b>
+                                        <p>
+                                            <input type="text" name="lineWidth" v-model="currentTarget.lineWidth">
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.fields.fillStyle">
+                                        <b>填充颜色</b>
+                                        <p>
+                                            <input type="text" name="fillStyle" placeholder="#FFFFFF" v-model="currentTarget.fillStyle"  >
+                                        </p>
+                                    </li>
+                                    <li v-if="currentType.type === 'rect'">
+                                        <b>圆角方位</b>
+                                        <p>
+                                            <label><input type="checkbox" name="rt" v-model="currentTarget.rt">右上</label><br/>
+                                            <label><input type="checkbox" name="rb" v-model="currentTarget.rb">右下</label><br/>
+                                            <label><input type="checkbox" name="lt" v-model="currentTarget.lt">左上</label><br/>
+                                            <label><input type="checkbox" name="lb" v-model="currentTarget.lb">左下</label><br/>
+                                        </p>
+                                    </li>
+                                </ul>
+                                
+                            </form>
+                            <div v-else>
+                                <h2>页面属性</h2>
+                                <ul>
+                                    <li>
+                                        <b>尺寸</b>
+                                        <p>
+                                            宽: <input type="text" v-model.number="result.width"><br/>
+                                            高: <input type="text" v-model.number="result.height">
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <b>缩放比</b>
+                                        <p>
+                                            <input type="text" v-model.number="result.scale"><br/>
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <b>填充色</b>
+                                        <p><input type="text" v-model="result.fillStyle"></p>
+                                    </li>
+                                    <li>
+                                        <b>背景图</b>
+                                        <p>
+                                            <textarea name="url" v-model="result.url"></textarea>
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <b>背景图映射字段</b>
+                                        <p>
+                                            <input type="text" name="bg" v-model="result.bg"></input>
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <b>背景高斯模糊</b>
+                                        <p>
+                                            <input type="checkbox" v-model="result.gblur">
+                                        </p>
+                                    </li>
+                                    <li>
+                                        <b>背景压缩比例</b>
+                                        <p><input type="input" v-model="result.compress"></p>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+        </div>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script src="./jsoneditor.min.js"></script>
+    
+    <script src="./cax.js"></script>
+    <script src="./json2canvas.js"></script>
+    
+    <script src="./option.js"></script>
+    <script src="./config.js"></script>
+    <script>
+        //http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg
+        var app = new Vue({
+            el: '#app',
+            data: {
+                picked: '元素测试',
+                data: null,
+                editor: null,
+                radios: [],
+                json:false,
+                currentTarget:null,
+                config:config,
+                result:{
+                    "width": 750,
+                    "height": 1334,
+                    "scale": 0.6,
+                    "fillStyle": "#40395A",
+                    "children":[]
+                },
+                linearGradient:[],
+                shadow:{},
+                colors:"",
+                init:true
+            },
+            computed:{
+                currentType(){
+                    if(this.currentTarget){
+                        return config[this.currentTarget.type];
+                    }else{
+                        return null;
+                    }
+                }
+            },
+            watch: {
+                picked: function(newValue, oldValue) {
+                    this.setCanvas(newValue);
+                },
+                result:{
+                    deep:true,
+                    handler(newValue){
+                        if(!this.json){
+                            // 确认不是手动编辑json的时候变化的
+                            var d = JSON.parse(JSON.stringify(newValue));
+                            this.clearKeyData(d);
+                            this.thorthDraw(d);
+                        }
+                        
+                    }
+                },
+                shadow(val){
+                    if(this.currentTarget){
+                        this.currentTarget.shadow = val;
+                    }
+                },
+                linearGradient(val){
+                    if(this.currentType){
+                        this.currentTarget.linearGradient = val;
+                    }
+                },
+                colors(val){
+                    if(this.currentType){
+                        try{
+                            if(val){
+                                var v = JSON.parse(val);
+                                if(v.length > 1){
+                                    this.currentTarget.colors = v; 
+                                }else{
+                                    delete this.currentTarget.colors; 
+                                }
+                            }else{
+                                delete this.currentTarget.colors;
+                            }
+                        }catch(e){
+                            delete this.currentTarget.colors;
+                            console.log(e);
+                        }
+                    }
+                    
+                }
+            },
+            created(){
+                this.timer = null;
+                var cache = null;
+                this.thorthDraw = function(json){
+                    cache = json;
+                    if(this.timer){
+                        return ;
+                    }
+                    this.timer =  setTimeout(() => {
+                        this.draw(cache);
+                        this.timer = null;
+                    }, 400);
+                }
+            },
+            mounted: function() {
+                let radios = [];
+                for (const key in option) {
+                    radios.push(key);
+                }
+                this.radios = radios;
+                
+                
+                this.setCanvas(this.picked);
+
+                const me = this;
+                me.pos = null;
+                window.addEventListener("mouseup",function(){
+                    me.pos = null;
+                });
+                window.addEventListener("mousemove",function(e){
+                    if(me.pos && me.currentTarget){
+                        var x = ( e.screenX -  me.pos.x)/me.result.scale;
+                        var y = ( e.screenY -  me.pos.y)/me.result.scale;
+                        if(!isNaN(me.currentTarget.x )){
+                            x = parseFloat(me.currentTarget.x) + x;
+                            me.$set(me.currentTarget,"x",x.toFixed(1));
+                        }
+                        if(!isNaN(me.currentTarget.y)){
+                            y = parseFloat(me.currentTarget.y) + y;
+                            me.$set(me.currentTarget,"y",y.toFixed(1));
+                        }
+                        
+                        me.pos = {
+                            x:e.screenX,
+                            y:e.screenY
+                        };
+                        me.init = false;
+                    }
+                });
+                window.addEventListener("click",function(e){
+                   me.shadow = {};
+                });
+
+
+            },
+            methods: {
+
+                mousedown(e,item){
+                    this.pos = {
+                        x:e.screenX,
+                        y:e.screenY
+                    };
+                    this.currentTarget = item;
+                    if(item.shadow && (typeof item.shadow == "object") ){
+                        this.shadow = item.shadow;
+                    }else{
+                        this.shadow = {};
+                    }
+                    if(item.linearGradient){
+                        this.linearGradient = item.linearGradient;
+                    }else{
+                        this.linearGradient = [];
+                    }
+                    if(item.colors){
+                        this.colors = JSON.stringify(item.colors);
+                    }else{
+                        this.colors = "";
+                    }
+                    //console.log(JSON.parse(JSON.stringify(item)));
+                },
+                draw(json){
+                    const me = this;
+                    if (!this.editor) {
+                        this.editor = new JSONEditor(document.getElementById("jsonview"), {
+                            mode:"code",
+                            modes:["tree","view","code","form"],
+                            // onChangeJSON: (json) => {
+                            //     console.time('draw');
+                            //     json2canvas.draw(json, '#myCanvas');
+                            //     console.timeEnd('draw');
+                            // },
+                            onChangeText(text){
+                                try{
+                                    text = JSON.parse(text);
+                                    console.time('draw');
+                                    json2canvas.draw(text, '#myCanvas');
+                                    console.timeEnd('draw');
+                                    me.result = text;
+                                }catch(e){
+                                    console.error(e);
+                                }
+                            }
+                        }, json);
+                        this.editor.expandAll &&  this.editor.expandAll();
+                    } else {
+                        this.editor.update(json)
+                    }
+                    console.time('draw');
+                    json2canvas.draw(json, '#myCanvas');
+                    console.timeEnd('draw');
+                },
+                setCanvas(picked) {
+                    this.result = option[picked];
+                    //this.draw(option[picked]);
+                },
+                preview(){
+                    if(this.editor){
+                        console.log(this.editor)
+                        var json = this.editor.get();
+                        console.log(json);
+                    }
+                },
+                downloadData(){
+                    const me = this;
+                    if(this.editor){
+                        var json = this.editor.get();
+                        var data = JSON.parse(JSON.stringify(json));
+                        me.clearKeyData(data);
+                        var str = JSON.stringify(data,null,4);
+                        var blob = new Blob([str], {
+						    type: 'text/html,charset=UTF-8'
+                        });
+                        window.URL = window.URL || window.webkitURL;
+                        var a = document.createElement("a");
+                        a.setAttribute("download",  "data.json");
+                        a.href = URL.createObjectURL(blob);
+                        a.click();
+                    }
+                },
+                clearKeyData(data){
+                    const me = this;
+                    for (let i = 0; i < data.children.length; i++){
+                            let item = data.children[i];
+                            me.clearKey(item);
+                            if(item.children){
+                            for(let j = 0; j < item.children.length; j++){
+                                let im = item.children[j];
+                                me.clearKey(im);
+                            }
+                            }
+                    }
+                },
+                clearKey(item){
+                        let x;
+                        let y;
+                        x = parseFloat(item.x);
+                        y = parseFloat(item.y);
+                        if (!isNaN(x)) {
+                            item.x = x;
+                        }
+                        if (!isNaN(y)) {
+                            item.y = y;
+                        }
+                        if (item.linearGradient && item.linearGradient.length == 0) {
+                            delete item.linearGradient;
+                        }
+                        if (item.shadow){
+                            let has = false;
+                            for(let i in item.shadow){
+                            has = false;
+                            }
+                            if(!has){
+                            delete item.shadow;
+                            }
+                        }
+                    
+                        if (item.r){
+                            item.r = parseFloat(item.r);
+                        }
+                        if (!item.lineWidth){
+                            delete item.lineWidth;
+                        }
+                },
+                downloadImg(){
+                    if(this.editor){
+                        var json = this.editor.get();
+                    }
+                },
+                slideType(){
+                    this.json = !this.json;
+                },
+                addNode(item){
+                    //添加类型
+                    if(!addNodes[item.type]){
+                        return ;
+                    }
+                    let data = addNodes[item.type]();
+                    if(this.currentTarget && this.currentTarget.type == "group" && item.type !== "group"){
+                        //添加到组件
+                        
+                        this.currentTarget.children.push(data);
+                    }else{
+                        this.result.children.push(data);
+                    }
+                    this.currentTarget = data;
+                },
+                getLeft(item,obj){
+                    var p = item.x;
+                    var c = {left:0,right:0}
+                    if(c[p] !== undefined){
+                        obj[p] = c[p];
+                    }else if(p == "center"){
+                        if(!obj.transform ){
+                            obj.transform = "translateX(-50%)";
+                        }else{
+                            obj.transform = obj.transform + " translateX(-50%)";
+                        }
+                        obj.left = "50%";
+                    }else{
+                        if(item.type == "circle" ){
+                            //obj.left = `${p - item.r}px`;
+                        }else{
+                            //obj.left=`${p}px`;
+                        }
+                        obj.left=`${p}px`;
+                    }
+                },
+                getTop(item,obj){
+                    var p = item.y;
+                    var c = {bottom:0,top:0}
+                    if(c[p] !== undefined){
+                        obj[p] = c[p];
+                    }else if(p == "center"){
+                        if(!obj.transform ){
+                            obj.transform = "translateY(-50%)";
+                        }else{
+                            obj.transform = obj.transform + " translateY(-50%)";
+                        }
+                        obj.top = "50%";
+                    }else{
+                        if(item.type == "circle"){
+                              //obj.top = `${p - item.r}px`;
+                        }else{
+                           // obj.top=`${p}px`;
+                        }
+                        obj.top=`${p}px`;
+                    }
+                },
+                styles(item){
+                    var obj = {};
+                    this.getLeft(item,obj);
+                    this.getTop(item,obj);
+                    if(item.width){
+                        obj.width = `${item.width}px`
+                    }
+                    if(item.height){
+                        if(item.height == "auto"){
+                            obj.height="auto";
+                        }else{
+                            obj.height =  `${item.height}px`;
+                        }
+                    }
+                    if(item.color){
+                        obj.color = item.color
+                    }
+                    if(item.lineHeight){
+                        obj.lineHeight = `${item.lineHeight}px`;
+                    }
+                    if(item.maxWidth){
+                        obj.maxWidth = `${item.maxWidth}px`;
+                        obj.whiteSpace = 'pre-line';
+                    }
+
+                    if(item.colors && item.colors.length > 0){
+                        var str = [];
+                        for(var i = 0; i < item.colors.length; i++){
+                            var b = item.colors[i];
+                            str.push(`${b[1]} ${b[0]*100}%`)
+                        }
+                        obj.background = `linear-gradient(${str.join(",")})`;
+
+                    }
+
+                    if(item.fillStyle){
+                        obj.background = item.fillStyle;
+                    }
+                    if(item.url){
+                        obj.background = `url(${item.url})  left top no-repeat `;
+                        obj.backgroundSize = "contain";
+                    }
+                    if(item.orientation){
+                        if(item.orientation == "vertical"){
+                            obj.writingMode = "tb"
+                        }
+                    }
+
+                    if(item.lineWidth){
+                        if(item.strokeStyle){
+                            obj.border=`${item.lineWidth}px solid ${item.strokeStyle}`;
+                        }else{
+                            obj.border=`${item.lineWidth}px solid #000`;
+                        }
+                    }
+                    //-webkit-line-clamp: 3;
+                    if(item.maxLine){
+                        obj["-webkitLineClamp"] = item.maxLine;
+                        obj["display"] = "-webkit-box"
+                    }
+                    if(item.r){
+                        if(item.type == "circle"){
+                            obj.width = `${item.r*2}px`;
+                            obj.height = `${item.r*2}px`;
+                            
+                        }
+                       
+                        var rad = `${item.r}px`;
+                        var radius = [rad,rad,rad,rad];
+
+                        if(item.rt === false){
+                            radius[1] = 0;
+                        }
+                        if(item.rb === false){
+                            radius[2] = 0;
+                        }
+                        if(item.lt === false){
+                            radius[0] = 0;
+                        }
+                        if(item.lb === false){
+                            radius[3] = 0;
+                        }
+                        obj.borderRadius = radius.join(" ");
+                    }
+
+                    if(item.type == "image" && item.isCircular){
+                        obj.borderRadius = "50%";
+                        obj.overflow="hidden";
+                    }
+                    if(item.font){
+                        obj.font = item.font;
+                    }
+
+                    if(item.textAlign){
+                       // obj.textAlign = item.textAlign;
+                    }
+                   
+                    return obj;
+                },
+                viewStyle(result){
+                    var obj = {};
+                    if(result.fillStyle){
+                        obj.background = result.fillStyle;
+                    }
+                    if(result.url){
+                        obj.background = `url(${result.url})  left top no-repeat `;
+                        obj.backgroundSize = "cover";
+                    }
+                    
+                    //0.6/800 = result.scale/obj.height
+                    obj.height = `${result.height}px`;
+                    obj.width = `${result.width}px`;
+                    obj.zoom = result.scale;
+                    return obj;
+                },
+                deleteed(){
+                    if(!this.currentTarget){
+                        return ;
+                    }
+                    for(var i = 0; i < this.result.children.length; i++){
+                        var item = this.result.children[i];
+                        if(this.currentTarget === item){
+                            this.currentTarget = null;
+                            this.result.children.splice(i,1);
+                            return ;
+                        }else if(item.children){
+                            for(var j = 0; j < item.children.length; j++){
+                                if(item.children[j] == this.currentTarget){
+                                    this.currentTarget = null;
+                                    item.children.splice(j,1);
+                                    return ;
+                                }
+                            }
+                        }
+                    }
+                },
+                onfile(e){
+                    const me = this;
+                    var inp = e.target.cloneNode();
+                    console.log(inp.files[0]);
+                    var file = inp.files[0];
+                    e.target.value = "";
+                    let reads = new FileReader();
+                    reads.readAsText(file, 'utf-8');
+                    reads.onload = function (e) {
+                        console.log(e.target.result);
+                        var result = JSON.parse(e.target.result);
+                        me.result =  result;
+                    };
+                },
+                cleared(){
+                    this.result.children = [];
+                }
+            }
+
+        })
+
+    </script>
+</body>
+
+</html>

@@ -8,7 +8,7 @@ Component({
     },
     showCanvas: {
       type: Boolean,
-      value: false,
+      value: true,
     }
   },
   observers: {

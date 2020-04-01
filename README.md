@@ -14,12 +14,13 @@ git clone https://github.com/willnewii/json2canvas.git
 ```
 
 ## 功能说明
-- 支持缩放 如果设计稿是750,而画布只有375时.你不需要任何换算,只需要将scale设置为0.5
+- 支持缩放 如果设计稿是750,而画布只有375时.不需要任何换算,只需要将scale设置为0.5
 - 支持图片圆角
 - 支持圆型,矩形,矩形圆角(背景色支持线性渐变)
 - 文本支持竖排,长文本自动换行
 - [支持动态文本](https://github.com/willnewii/json2canvas/blob/master/doc/动态文本.md)
 - 支持分组(cax里很好用的一个功能)  [说明](https://github.com/dntzhang/cax/blob/master/README.CN.md)
+- 支持旋转
 
 ## 小程序添加json2canvas组件
 require：SDKVersion>=2.6.1
@@ -41,10 +42,3 @@ require：SDKVersion>=2.6.1
 - [竖排计算 张鑫旭大神的博客](http://www.zhangxinxu.com/wordpress/?p=7362)
 - [coolzjy@v2ex 正则优化断行](https://regexr.com/4f12l)
 - [mp_canvas_drawer](https://github.com/kuckboy1994/mp_canvas_drawer)
-
-
-## issue
-- 如果有元素使用auto,后面的元素y值应该怎么设置更合理?
-按照设计稿填写。本来想的是，如果有元素出现auto,那么后面的直接y值累加更简单,但这种情况仅使用流式且没有边距的情况,处理场景太单一.
-
-- 如果出现auto,canvas 高度的设置问题

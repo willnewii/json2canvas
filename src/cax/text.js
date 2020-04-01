@@ -18,8 +18,17 @@ class Text extends Graphics {
       color: 'black',
       textAlign: 'left',
       baseline: 'top',
-      orientation: 'horizontal'
+      orientation: 'horizontal',
+      lineHeight: 0
     }, option)
+
+    if (!option.lineHeight) {
+      let result = /\d+px/i.exec(option.font);
+      if (result) {
+        option.lineHeight = parseFloat(result[0]);
+      }
+    }
+
     this.option = option || {}
     this.text = option.text;
   }
@@ -34,11 +43,17 @@ class Text extends Graphics {
     if (this.option.font) {
       measureCtx.font = this.option.font
     }
-    return measureCtx.measureText(word || this.text).width
+
+    let width = measureCtx.measureText(word || this.text).width;
+
+/*     if (this.option.maxWidth && width > this.option.maxWidth) {
+      width = this.option.maxWidth
+    } */
+    return width
   }
 
   getHeight() {
-    return this.renderBreakLine({ isMeasure: true });
+    return this.renderBreakLine({ ctx: this, isMeasure: true });
   }
 
   render(ctx) {
@@ -177,6 +192,7 @@ class Text extends Graphics {
     if (fillText) {
       !isMeasure && ctx.fillText(fillText, 0, fillTop)
     }
+
     return fillTop + this.option.lineHeight
   }
 }

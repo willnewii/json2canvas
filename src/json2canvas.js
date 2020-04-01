@@ -107,6 +107,7 @@ function handleGroup({ option, parent }) {
 function handleGraphics({ option, parent }) {
     const ele = new Graphics(option);
     setPosition(ele, option, parent);
+    setRotation(ele, option);
     return ele;
 }
 
@@ -122,10 +123,10 @@ function handleImage({ option, parent }) {
         }
 
         let width = bitmap.width;
-
         // 缩放
         bitmap.scale = option.width / width;
         setPosition(bitmap, option, parent);
+        setRotation(bitmap, option);
 
         //圆角
         if (option.isCircular) {
@@ -146,8 +147,54 @@ function handleText({ option, parent }) {
         text.shadow = option.shadow;
     }
     setPosition(text, option, parent);
-
+    setRotation(text, option);
     return text;
+}
+
+/**
+ * 处理元素的位置
+ * @param {*} ele canvas元素
+ * @param {*} option 配置参数
+ * @param {*} parent 父元素,用于计算相对位置
+ */
+function setRotation(ele, option, parent) {
+    if (!option.rotation)
+        return;
+
+    console.log(ele, option);
+
+    let width, height = 0;
+    switch (option.type) {
+        case TYPE.image:
+            width = ele.width;
+            height = ele.height;
+
+            ele.x += width / 2 * ele.scale
+            ele.y += height / 2 * ele.scale
+            break;
+        case TYPE.text:
+            width = ele.getWidth();
+            if (width > option.maxWidth) {
+                width = option.maxWidth;
+            }
+
+            height = ele.getHeight();
+
+            ele.x += width / 2
+            ele.y += height / 2
+            break;
+        default:
+            width = option.width;
+            height = option.height;
+
+            ele.x += width / 2
+            ele.y += height / 2
+            break;
+    }
+    ele.originX = width / 2
+    ele.originY = height / 2
+
+    ele.rotation = option.rotation;
 }
 
 /**

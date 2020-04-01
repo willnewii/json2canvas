@@ -28,6 +28,7 @@ option = {
                     "width": 100,
                     "x": 150,
                     "y": 50,
+                    "rotation": 90,
                     "isCircular": true,
                 }, {
                     "type": "circle",
@@ -61,6 +62,7 @@ option = {
                     "width": 100,
                     "height": 100,
                     "lineWidth": 5,
+                    "rotation": 45,
                     "strokeStyle": "#FFFFFF",
                     "linearGradient": [0, 0, 0, 100],
                     "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
@@ -163,6 +165,7 @@ option = {
                 }, {
                     "type": "text",
                     "text": "我是一段文字,我会自动换行:有没有那么 永远不改变 拥word抱过的美丽 都再也不mayday破碎 让险峻岁月不能 在脸上撒野 让生离和死别都遥远",
+                    "rotation": 90,
                     "font": "24px Arial",
                     "color": "#FFFFFF",
                     "x": 0,
