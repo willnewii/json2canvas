@@ -113,28 +113,30 @@ function handleGraphics({ option, parent }) {
 
 function handleImage({ option, parent }) {
     let bitmap = imageMap.get(option.url);
-
     if (bitmap) {
-        //标记位,如果一张图用到两次,应该clone.
-        if (bitmap.used) {
-            bitmap = bitmap.clone()
-        } else {
-            bitmap.used = true;
-        }
+      //标记位,如果一张图用到两次,应该clone.
+      if (bitmap.used) {
+        bitmap = bitmap.clone();
+      } else {
+        bitmap.used = true;
+      }
 
-        let width = bitmap.width;
-        // 缩放
-        bitmap.scale = option.width / width;
-        setPosition(bitmap, option, parent);
-        setRotation(bitmap, option);
+      let width = bitmap.width;
+      // 缩放
+      bitmap.scale = option.width / width;
+      setPosition(bitmap, option, parent);
+      setRotation(bitmap, option);
 
-        //圆角
-        if (option.isCircular) {
-            const clipPath = new cax.Graphics();
-            clipPath.arc(width / 2, width / 2, width / 2, 0, Math.PI * 2);
-            bitmap.clip(clipPath);
-        }
-        return bitmap;
+      const clipPath = new Graphics({
+        width: bitmap.width,
+        height: option.height ? option.height / bitmap.scale : bitmap.height,
+        r: option.isCircular ? option.width / bitmap.scale / 2 : option.r / bitmap.scale || 0,
+        type: "rect",
+        fillStyle : '#0000'
+      });
+      bitmap.clip(clipPath);
+      
+      return bitmap;
     }
     return null;
 }

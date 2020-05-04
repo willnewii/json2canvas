@@ -1,7 +1,7 @@
 <canvas 
     class="cax-canvas"
     canvas-id="{{ id }}" 
-    style="border: 1px solid;width: {{width}}px; height: {{height}}px;"
+    style="width: {{width}}px; height: {{height}}px;"
     wx:if="{{showCanvas}}">
     <slot></slot>
 </canvas>

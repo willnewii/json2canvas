@@ -20,6 +20,7 @@ option = {
                     "type": "image",
                     "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
                     "width": 100,
+                    "r": 20,
                     "x": 0,
                     "y": 50,
                 }, {

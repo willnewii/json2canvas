@@ -1,6 +1,6 @@
 {
     "name": "json2canvas",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "通过json直接在canvas上绘制图像.基于[cax](https://github.com/dntzhang/cax),借鉴(抄袭)了[mp_canvas_drawer](https://github.com/kuckboy1994/mp_canvas_drawer).比mp_canvas_drawer有更多的图形支持,图片圆角支持,缩放,分组等功能.同时支持小程序和浏览器.",
     "main": "src/json2canvas.js",
     "miniprogram": "dist_miniprogram",
