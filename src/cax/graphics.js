@@ -31,7 +31,7 @@ class Graphics extends _Graphics {
     let gradient = getGradient({ option });
 
     //如果fillStyle&strokeStyle 都不填,默认fillStyle
-    if (!option.fillStyle && !option.strokeStyle) {
+    if (!('fillStyle' in option) && !option.strokeStyle) {
       option.fillStyle = '#FFFFFF'
     }
 

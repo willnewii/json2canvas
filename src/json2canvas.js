@@ -132,10 +132,10 @@ function handleImage({ option, parent }) {
         height: option.height ? option.height / bitmap.scale : bitmap.height,
         r: option.isCircular ? option.width / bitmap.scale / 2 : option.r / bitmap.scale || 0,
         type: "rect",
-        fillStyle : '#0000'
+        fillStyle: "",
       });
       bitmap.clip(clipPath);
-      
+
       return bitmap;
     }
     return null;
