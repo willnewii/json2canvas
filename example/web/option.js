@@ -20,14 +20,20 @@ option = {
                     "type": "image",
                     "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
                     "width": 100,
-                    "r": 20,
                     "x": 0,
                     "y": 50,
                 }, {
                     "type": "image",
                     "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
                     "width": 100,
+                    "r": 20,
                     "x": 150,
+                    "y": 50,
+                }, {
+                    "type": "image",
+                    "url": "http://res.mayday5.me/wxapp/wxavatar/tmp/wx6065082f33eae31b.o6zAJs7pa2Q1niVqKRyvmiuoBz6Q.gDe07p2k340vc0e6d92ba5ae372477471e03e4c04363.jpg",
+                    "width": 100,
+                    "x": 300,
                     "y": 50,
                     "rotation": 90,
                     "isCircular": true,
@@ -36,7 +42,7 @@ option = {
                     "r": 50,
                     "lineWidth": 5,
                     "strokeStyle": "#CCCCCC",
-                    "x": 150,
+                    "x": 300,
                     "y": 50,
                 }]
             }, {
@@ -56,7 +62,7 @@ option = {
                     "height": 100,
                     "lineWidth": 5,
                     "strokeStyle": "#FFFFFF",
-                    "x": 00,
+                    "x": 0,
                     "y": 50,
                 }, {
                     "type": "rect",
@@ -118,7 +124,10 @@ option = {
                 }, {
                     "type": "circle",
                     "r": 50,
-                    "lineWidth": 5,
+                    "angle": 180,
+                    "sAngle": -90,
+                    "lineCap": "round",
+                    "lineWidth": 10,
                     "linearGradient": [0, 0, 0, 200],
                     "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
                     "strokeStyle": "#CCCCCC",
@@ -143,7 +152,7 @@ option = {
                     "color": "#FFFFFF",
                     "x": 0,
                     "y": 0,
-                }, {
+                },{
                     "type": "text",
                     "text": "我是一段文字",
                     "font": "24px Arial",
@@ -203,6 +212,34 @@ option = {
                     "x": 400,
                     "y": 0,
                 }]
+            }, {
+                "type": "line",
+                "long": 400,
+                "lineCap": "round",
+                "lineWidth": 5,
+                "strokeStyle": "#FFFFFF",
+                "linearGradient": [0, 0, 200, 0],
+                "colors": [[0, '#B0F566'], [0.5, '#4AF2A1'], [1, '#5CC9F5']],
+                "x": 50,
+                "y": 1240,
+            }, {
+                "type": "line",
+                "long": 400,
+                "lineCap": "round",
+                "lineWidth": 5,
+                "strokeStyle": "#FFFFFF",
+                "x": 50,
+                "y": 1220,
+            }, {
+                "type": "line",
+                "long": 400,
+                "lineDash": [20],
+                "lineDashOffset": 5,
+                "lineCap": "round",
+                "lineWidth": 5,
+                "strokeStyle": "#FFFFFF",
+                "x": 50,
+                "y": 1200,
             }]
     },
     "海报样式1": {

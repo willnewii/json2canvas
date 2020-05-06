@@ -84,19 +84,20 @@ function handleGroup({ option, parent }) {
         let ele = null;
         let param = { option: child, parent: caxGroup };
         switch (child.type) {
-            case TYPE.group:
-                ele = handleGroup(param);
-                break;
-            case TYPE.rect:
-            case TYPE.circle:
-                ele = handleGraphics(param);
-                break;
-            case TYPE.image:
-                ele = handleImage(param);
-                break;
-            case TYPE.text:
-                ele = handleText(param);
-                break;
+          case TYPE.group:
+            ele = handleGroup(param);
+            break;
+          case TYPE.rect:
+          case TYPE.circle:
+          case TYPE.line:
+            ele = handleGraphics(param);
+            break;
+          case TYPE.image:
+            ele = handleImage(param);
+            break;
+          case TYPE.text:
+            ele = handleText(param);
+            break;
         }
         ele && caxGroup.add(ele);
     });

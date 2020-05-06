@@ -18,10 +18,12 @@
 			"ignore": [],
 			"disablePlugins": [],
 			"outputPath": ""
-		}
+		},
+		"useCompilerModule": true,
+		"userConfirmedUseCompilerModuleSwitch": false
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.7.1",
+	"libVersion": "2.11.0",
 	"appid": "wxf5b6816b0ac31f4a",
 	"projectname": "json2canvas",
 	"debugOptions": {

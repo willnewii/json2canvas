@@ -33,6 +33,7 @@ const isWegame = typeof wx !== 'undefined' && wx.createCanvas;
 const TYPE = {
     rect: 'rect',
     circle: 'circle',
+    line: 'line',
     image: 'image',
     text: 'text',
     group: 'group'
