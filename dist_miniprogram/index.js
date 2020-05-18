@@ -6,6 +6,10 @@ Component({
       type: Object,
       value: {},
     },
+    saveImage: {
+      type: Boolean,
+      value: true,
+    },
     showCanvas: {
       type: Boolean,
       value: true,
@@ -57,7 +61,7 @@ Component({
             this.setData({
               isPainting: false,
             })
-            this.saveImageToLocal();
+            this.data.saveImage && this.saveImageToLocal();
           });
         }
       }, 100)
